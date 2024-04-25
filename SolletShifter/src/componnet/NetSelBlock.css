@@ -1,0 +1,71 @@
+.NetSelBlock{
+    @apply bg-gray-50 bg-opacity-10;
+    @apply rounded-2xl;
+    @apply flex justify-center items-center;
+}
+.NetSelBlockNetTitle{
+    @apply px-4;
+    @apply mt-[6px];
+    @apply text-center;
+
+    @apply text-[14px];
+}
+
+.NetSelBlockTitle{
+    @apply ml-[-14px];
+    @apply text-[10px];
+    @apply text-gray-400;
+    
+}
+
+.NetSelBlockIcon{
+
+    
+
+}
+.NetSelBlockIcon>img{
+    margin-top: 2px;
+    @apply w-8;
+    @apply h-8;
+    @apply min-w-8;
+    @apply min-h-8;
+    @apply mx-3;
+}
+.NetSelBlockMore:hover{
+    @apply scale-125;
+}
+.Menu {
+    @apply border-0;
+    @apply text-sm;
+    @apply opacity-95;
+
+    /*@apply bg-gradient-to-b from-gray-900 to-gray-950;*/
+    @apply bg-gray-800;
+}
+.Menu:hover{
+
+}
+
+.MenuButton{
+    
+}
+.MenuButton>svg {
+    @apply text-gray-50;
+} 
+.MenuButton:hover {
+
+    @apply bg-gray-300 bg-opacity-10;
+} 
+.Menu>.MenuItem{
+    @apply scale-95;
+    @apply opacity-95;
+    @apply rounded-2xl;
+}
+.Menu>.MenuItem>img{
+    @apply size-6;
+    
+}
+.Menu>.MenuItem:hover{
+    @apply bg-gray-400;
+    @apply bg-opacity-30;
+}

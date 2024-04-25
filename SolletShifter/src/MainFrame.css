@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+  .MainFrameBar{
+    @apply h-[540px] max-h-[540px] min-h-[540px] -mb-[5px];
+  }
+  .MainFramBarButton{
+    @apply w-[185px] h-[36px] mx-5
+  }

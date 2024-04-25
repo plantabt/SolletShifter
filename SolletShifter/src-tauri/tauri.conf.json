@@ -1,0 +1,74 @@
+{
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build",
+    "devPath": "http://localhost:1420",
+    "distDir": "../dist"
+  },
+  "package": {
+    "productName": "SolletShifter",
+    "version": "1.0.31"
+  },
+  "tauri": {
+    "allowlist": {
+      "all": false,
+      "shell": {
+        "all": false,
+        "open": true
+      
+      },"http": {
+        "all": true, 
+        "request": true, 
+        "scope": ["https://localhost/*", "https://127.0.0.1/*"]
+      },
+      "window": {
+        "all": true,
+        "close": true,
+        "hide": true,
+        "show": true,
+        "maximize": false,
+        "minimize": true,
+        "unmaximize": false,
+        "unminimize": false,
+        "startDragging": true,
+        "setResizable": false
+      }
+    },
+    "windows": [
+      {
+        "title": "SolletShifter",
+   
+        "decorations": false,
+        "center": true,
+        "visible": false,
+    
+
+        "width": 900,
+        "maxWidth": 900,
+        "minWidth": 900,
+        
+        "height": 632,
+        "maxHeight": 632,
+        "minHeight": 632,
+        
+        "fullscreen": false,
+        "resizable": true
+      }
+    ],
+    "security": {
+      "csp": ""
+    },
+    "bundle": {
+      "active": true,
+      "targets": "all",
+      "identifier": "SolletShifter",
+      "icon": [
+        "icons/32x32.png",
+        "icons/128x128.png",
+        "icons/128x128@2x.png",
+        "icons/icon.icns",
+        "icons/icon.ico"
+      ]
+    }
+  }
+}

@@ -1,0 +1,8 @@
+.IconButtonEx{
+    
+    @apply mx-7 mt-3 w-[145px] h-[44px] flex justify-center items-center hover:saturate-150  active:saturate-200  -mb-12 
+}
+
+.IconBtnText{
+    @apply text-xs text-gray-950 mt-1 group-hover:text-gray-50 group-active:scale-105
+}

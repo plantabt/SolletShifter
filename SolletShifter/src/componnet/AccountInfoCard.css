@@ -1,0 +1,65 @@
+
+
+.MuiListItemButton-root{
+    @apply cursor-default;
+
+}
+.ContentCopyBtn{
+    @apply -mt-8 mx-[55px] w-[18px] h-[18px];
+
+    
+}
+.ContentCopyBtn:hover{
+
+    @apply scale-105 cursor-pointer;
+    
+}
+.ContentCopyBtn:active{
+
+    @apply scale-110 cursor-pointer;
+    
+}
+.DeleteBtn{
+
+    @apply -mt-8 mx-4;
+}
+.DeleteBtn:hover{
+    @apply scale-105;
+}
+.DeleteBtn:active{
+    @apply saturate-150;
+    @apply scale-110;
+}
+.MoreDetailsBtn{
+    @apply mx-[48px] mt-[28px] w-[139px] h-[45px] flex justify-center items-center;
+}
+.MoreDetailsBtn:hover{
+    @apply hover:saturate-150
+}
+.MoreDetailsBtn:active{
+    @apply hover:saturate-200
+}
+.MuiMenuButton1-root{
+    @apply w-4 h-4
+}
+.MuiMenuButton1-root svg{
+    @apply w-4 h-4
+}
+
+.MenuDropDown{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: left;
+    @apply flex justify-start;
+}
+.MenuDropDown>span:last-child{
+    @apply hidden; 
+}
+.MenuDropDown>span:nth-child(2){
+    @apply mx-4; 
+}
+.MenuDropDown>img{
+    @apply -mx-3;
+     
+}

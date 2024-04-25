@@ -1,0 +1,19 @@
+
+
+.DirectionBtn{
+    @apply hover:saturate-150;
+    @apply active:saturate-200 active:scale-105;
+
+}
+
+.DirectionButtonText{
+    @apply -mt-[2px] group-hover:text-gray-100;
+}
+.DirectionButtonDisabled{
+    @apply saturate-0;
+    @apply hover:saturate-0;
+    @apply active:saturate-0 active:scale-100;
+}
+.DirectionButtonTextDisabled{
+    @apply -mt-[2px] ;
+}

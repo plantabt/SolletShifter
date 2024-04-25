@@ -1,0 +1,24 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+.logo.vite:hover {
+  filter: drop-shadow(0 0 2em #747bff);
+}
+
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafb);
+}
+button,label,h1,h2,h3,h4,h5,div {
+  user-select: none; 
+  
+}
+label,h1,h2,h3,h4,h5,pre,body{
+  cursor:default;
+}
+body {
+  overflow: hidden;
+}
+

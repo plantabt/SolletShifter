@@ -1,0 +1,8 @@
+.BackButton{
+    @apply hover:saturate-150;
+    @apply active:saturate-200 active:scale-105;
+}
+.BackButtonText{
+    @apply text-[14px] text-gray-900;
+    @apply group-hover:text-gray-50;
+}
