@@ -1,0 +1,7 @@
+[workspace]
+members=[ 
+    "SolletRPCServer",
+    "SolletShifter/src-tauri",
+    "QuickLogger"
+, "Config"]
+resolver = "2"
