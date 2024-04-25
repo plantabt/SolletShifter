@@ -3,7 +3,7 @@ use solana_client::rpc_client::RpcClient;
 pub struct CryptClients{
     pub solana:RpcClient,
     pub eth:RpcClient,
-    pub poloy:RpcClient
+    pub poly:RpcClient
 }
 #[allow(non_snake_case)]
 pub enum ResponseStatus{

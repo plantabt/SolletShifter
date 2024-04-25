@@ -35,7 +35,7 @@ struct ServerConfig {
     port:String,
     solana:String,
     eth:String,
-    poloy:String
+    poly:String
 }
 #[actix_web::main]
 async fn main()->io::Result<()> {
@@ -58,8 +58,8 @@ async fn main()->io::Result<()> {
 
     let solana = RpcClient::new(server_cfg.solana);
     let eth = RpcClient::new(server_cfg.eth);
-    let poloy = RpcClient::new(server_cfg.poloy);
-    let encrypt_clients = Arc::new(CryptClients{solana,eth,poloy});
+    let poly = RpcClient::new(server_cfg.poly);
+    let encrypt_clients = Arc::new(CryptClients{solana,eth,poly});
     HttpServer::new(move||{
         let cors = Cors::permissive();  // 创建一个允许所有来源的 CORS 实例
         App::new()
