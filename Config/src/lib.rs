@@ -3,7 +3,7 @@ use serde::{Serialize, Deserialize};
 use std::fs::File;
 use std::io::{self, Read, Write};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize,Clone,Debug)]
 struct Config {
     key1: String,
 }
@@ -13,7 +13,7 @@ where
     T:DeserializeOwned
 {
     // 读取配置文件
-    let file = File::open("./config.json").unwrap();
+    let file = File::open("./config/config.json").unwrap();
     let reader = io::BufReader::new(file);
     let result = serde_json::from_reader(reader).unwrap();
     Ok(result)
@@ -26,7 +26,7 @@ where
 {
     // 写入配置文件
     let new_config = cfg;
-    let file = File::create("./config.json").unwrap();
+    let file = File::create("./config/config.json").unwrap();
     serde_json::to_writer(file, &new_config).unwrap();
 }
 
