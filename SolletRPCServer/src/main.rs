@@ -23,6 +23,7 @@ struct TestData{
 
 
 
+
 #[get("/api/test")]
 async fn test(data:web::Data<TestData>)->impl Responder{
     QuickLogger::Info(&"api/test".to_string());
@@ -56,9 +57,14 @@ async fn main()->io::Result<()> {
     QuickLogger::Warn(&format!("************** {} v{} ****************",package_name,package_version));
     QuickLogger::Warn(&format!("***************** {}:{} *******************",server_cfg.server,server_cfg.port));
 
-    let solana = RpcClient::new(server_cfg.solana);
-    let eth = RpcClient::new(server_cfg.eth);
-    let poly = RpcClient::new(server_cfg.poly);
+    let solana = RpcClient::new(server_cfg.solana.clone());
+    let eth = RpcClient::new(server_cfg.eth.clone());
+    let poly = RpcClient::new(server_cfg.poly.clone());
+
+    QuickLogger::Warn(&format!("SOLANA:{:?}",server_cfg.solana.clone()));
+    QuickLogger::Warn(&format!("ETH:{}",server_cfg.eth.clone()));
+    QuickLogger::Warn(&format!("POLY:{}",server_cfg.poly.clone()));
+
     let encrypt_clients = Arc::new(CryptClients{solana,eth,poly});
     HttpServer::new(move||{
         let cors = Cors::permissive();  // 创建一个允许所有来源的 CORS 实例
