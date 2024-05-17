@@ -1,0 +1,883 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'SolletRPCServer'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=SolletRPCServer",
+                    "--package=SolletRPCServer"
+                ],
+                "filter": {
+                    "name": "SolletRPCServer",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'SolletRPCServer'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=SolletRPCServer",
+                    "--package=SolletRPCServer"
+                ],
+                "filter": {
+                    "name": "SolletRPCServer",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in library 'Config'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--lib",
+                    "--package=Config"
+                ],
+                "filter": {
+                    "name": "Config",
+                    "kind": "lib"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in library 'QuickLogger'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--lib",
+                    "--package=QuickLogger"
+                ],
+                "filter": {
+                    "name": "QuickLogger",
+                    "kind": "lib"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'SolletShifter'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=SolletShifter",
+                    "--package=SolletShifter"
+                ],
+                "filter": {
+                    "name": "SolletShifter",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'SolletShifter'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=SolletShifter",
+                    "--package=SolletShifter"
+                ],
+                "filter": {
+                    "name": "SolletShifter",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in library 'walletd'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--lib",
+                    "--package=walletd"
+                ],
+                "filter": {
+                    "name": "walletd",
+                    "kind": "lib"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug example 'wd_quickstart_guide'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=wd_quickstart_guide",
+                    "--package=walletd"
+                ],
+                "filter": {
+                    "name": "wd_quickstart_guide",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in example 'wd_quickstart_guide'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--example=wd_quickstart_guide",
+                    "--package=walletd"
+                ],
+                "filter": {
+                    "name": "wd_quickstart_guide",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug example 'workflow'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=workflow",
+                    "--package=walletd"
+                ],
+                "filter": {
+                    "name": "workflow",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in example 'workflow'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--example=workflow",
+                    "--package=walletd"
+                ],
+                "filter": {
+                    "name": "workflow",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in library 'walletd_bip39'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--lib",
+                    "--package=walletd_bip39"
+                ],
+                "filter": {
+                    "name": "walletd_bip39",
+                    "kind": "lib"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug example 'bip39_quickstart_guide'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=bip39_quickstart_guide",
+                    "--package=walletd_bip39"
+                ],
+                "filter": {
+                    "name": "bip39_quickstart_guide",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in example 'bip39_quickstart_guide'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--example=bip39_quickstart_guide",
+                    "--package=walletd_bip39"
+                ],
+                "filter": {
+                    "name": "bip39_quickstart_guide",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug example 'bip39_basic'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=bip39_basic",
+                    "--package=walletd_bip39"
+                ],
+                "filter": {
+                    "name": "bip39_basic",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in example 'bip39_basic'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--example=bip39_basic",
+                    "--package=walletd_bip39"
+                ],
+                "filter": {
+                    "name": "bip39_basic",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug example 'bip39_restore'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=bip39_restore",
+                    "--package=walletd_bip39"
+                ],
+                "filter": {
+                    "name": "bip39_restore",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in example 'bip39_restore'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--example=bip39_restore",
+                    "--package=walletd_bip39"
+                ],
+                "filter": {
+                    "name": "bip39_restore",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in library 'walletd_mnemonics_core'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--lib",
+                    "--package=walletd_mnemonics_core"
+                ],
+                "filter": {
+                    "name": "walletd_mnemonics_core",
+                    "kind": "lib"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in library 'walletd_bitcoin'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--lib",
+                    "--package=walletd_bitcoin"
+                ],
+                "filter": {
+                    "name": "walletd_bitcoin",
+                    "kind": "lib"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug example 'btc_quickstart_guide'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=btc_quickstart_guide",
+                    "--package=walletd_bitcoin"
+                ],
+                "filter": {
+                    "name": "btc_quickstart_guide",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in example 'btc_quickstart_guide'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--example=btc_quickstart_guide",
+                    "--package=walletd_bitcoin"
+                ],
+                "filter": {
+                    "name": "btc_quickstart_guide",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug example 'basic'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=basic",
+                    "--package=walletd_bitcoin"
+                ],
+                "filter": {
+                    "name": "basic",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in example 'basic'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--example=basic",
+                    "--package=walletd_bitcoin"
+                ],
+                "filter": {
+                    "name": "basic",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in library 'walletd_coin_core'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--lib",
+                    "--package=walletd_coin_core"
+                ],
+                "filter": {
+                    "name": "walletd_coin_core",
+                    "kind": "lib"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in library 'walletd_hd_key'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--lib",
+                    "--package=walletd_hd_key"
+                ],
+                "filter": {
+                    "name": "walletd_hd_key",
+                    "kind": "lib"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug example 'hd_key_basic'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=hd_key_basic",
+                    "--package=walletd_hd_key"
+                ],
+                "filter": {
+                    "name": "hd_key_basic",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in example 'hd_key_basic'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--example=hd_key_basic",
+                    "--package=walletd_hd_key"
+                ],
+                "filter": {
+                    "name": "hd_key_basic",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug example 'hd_quickstart_guide'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=hd_quickstart_guide",
+                    "--package=walletd_hd_key"
+                ],
+                "filter": {
+                    "name": "hd_quickstart_guide",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in example 'hd_quickstart_guide'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--example=hd_quickstart_guide",
+                    "--package=walletd_hd_key"
+                ],
+                "filter": {
+                    "name": "hd_quickstart_guide",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug integration test 'test_hd_key_path'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--test=test_hd_key_path",
+                    "--package=walletd_hd_key"
+                ],
+                "filter": {
+                    "name": "test_hd_key_path",
+                    "kind": "test"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in library 'walletd_ethereum'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--lib",
+                    "--package=walletd_ethereum"
+                ],
+                "filter": {
+                    "name": "walletd_ethereum",
+                    "kind": "lib"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug example 'get_accounts_and_balances'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=get_accounts_and_balances",
+                    "--package=walletd_ethereum"
+                ],
+                "filter": {
+                    "name": "get_accounts_and_balances",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in example 'get_accounts_and_balances'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--example=get_accounts_and_balances",
+                    "--package=walletd_ethereum"
+                ],
+                "filter": {
+                    "name": "get_accounts_and_balances",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug example 'send_funds'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=send_funds",
+                    "--package=walletd_ethereum"
+                ],
+                "filter": {
+                    "name": "send_funds",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in example 'send_funds'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--example=send_funds",
+                    "--package=walletd_ethereum"
+                ],
+                "filter": {
+                    "name": "send_funds",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug example 'get_smart_contract_transactions'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=get_smart_contract_transactions",
+                    "--package=walletd_ethereum"
+                ],
+                "filter": {
+                    "name": "get_smart_contract_transactions",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in example 'get_smart_contract_transactions'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--example=get_smart_contract_transactions",
+                    "--package=walletd_ethereum"
+                ],
+                "filter": {
+                    "name": "get_smart_contract_transactions",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug example 'get_block_data'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=get_block_data",
+                    "--package=walletd_ethereum"
+                ],
+                "filter": {
+                    "name": "get_block_data",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in example 'get_block_data'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--example=get_block_data",
+                    "--package=walletd_ethereum"
+                ],
+                "filter": {
+                    "name": "get_block_data",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug example 'get_network_information'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=get_network_information",
+                    "--package=walletd_ethereum"
+                ],
+                "filter": {
+                    "name": "get_network_information",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in example 'get_network_information'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--example=get_network_information",
+                    "--package=walletd_ethereum"
+                ],
+                "filter": {
+                    "name": "get_network_information",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug example 'instantiate_wallet'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=instantiate_wallet",
+                    "--package=walletd_ethereum"
+                ],
+                "filter": {
+                    "name": "instantiate_wallet",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in example 'instantiate_wallet'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--example=instantiate_wallet",
+                    "--package=walletd_ethereum"
+                ],
+                "filter": {
+                    "name": "instantiate_wallet",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug example 'eth_quickstart_guide'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=eth_quickstart_guide",
+                    "--package=walletd_ethereum"
+                ],
+                "filter": {
+                    "name": "eth_quickstart_guide",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in example 'eth_quickstart_guide'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--example=eth_quickstart_guide",
+                    "--package=walletd_ethereum"
+                ],
+                "filter": {
+                    "name": "eth_quickstart_guide",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug integration test 'wallet_instantiation'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--test=wallet_instantiation",
+                    "--package=walletd_ethereum"
+                ],
+                "filter": {
+                    "name": "wallet_instantiation",
+                    "kind": "test"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}

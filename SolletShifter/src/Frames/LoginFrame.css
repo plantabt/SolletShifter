@@ -1,0 +1,4 @@
+.Sheet {
+  @apply bg-gradient-to-rd from-blue-950 to-green-950;
+
+}

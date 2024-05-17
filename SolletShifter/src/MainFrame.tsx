@@ -10,15 +10,18 @@ import HelpIcon from '@mui/icons-material/QuestionAnswerRounded';
 
 
 import SolanaIcon from 'cryptocurrency-icons/32/color/sol.png';
-import { Grid } from "@mui/joy";
+import { Grid, Typography } from "@mui/joy";
 
 import MenubarButton, { ButtonRef } from "./componnet/MenubarButton";
 
 import NetSelBlock from "./componnet/NetSelBolck";
 
-import FrameCreateAccount, { CreateAccount_AccountInfo } from "./Frames/FrameCreateAccount";
+import FrameCreateAccount from "./Frames/FrameCreateAccount";
 import FrameAccountList, { FrameAccountListExportRef } from "./Frames/FrameAccountList";
 import { PublicKey } from "@solana/web3.js";
+import FrameImportAccount from "./Frames/FrameImportAccount";
+import { AccountInfo } from "./commmon/common";
+import LoginFrame from "./Frames/LoginFrame";
 
 
 const menuBars = [
@@ -30,6 +33,7 @@ const menuBars = [
 enum FramePage {
   MainFrame = 0,
   CreateAccount,
+  ImportAccount,
   MoreDetails
 }
 
@@ -37,10 +41,11 @@ function MainFrame() {
   const [CurrentFrame, setCurrentFrame] = useState(FramePage.MainFrame);
   //const [mounted, setMounted] = useState(false);
   //const [value, setValue] = useState<string | null>('default');
+  const [lastBarBtn, setLastBarBtn] = useState<ButtonRef | null>(null);
 
-
-  var lastBarBtn: any;
+  const ACCONT_FRAME_NAME=["create","import"];
   const BarBtnRefs = useRef(menuBars.map(() => createRef<ButtonRef>()));
+
   const AccountListExport = useRef<FrameAccountListExportRef>(null);
   /*const BarBtnRefs = useRef<(LegacyRef<ButtonRef>  | null)[]>(menuBars.map(() => null));//useRef<ButtonRef>(null);
   const setRef = useCallback((index: number )=>(instance: any)=>{
@@ -52,11 +57,15 @@ function MainFrame() {
 
   useEffect(() => {
     setTimeout(() => {
-      lastBarBtn = BarBtnRefs.current[0]?.current;
+      setLastBarBtn(BarBtnRefs.current[0]?.current);
     }, 1000);
   }, []);
   function handleCreateAccount() {
     setCurrentFrame(FramePage.CreateAccount);
+    //setAccountCards(currentCards=>[...currentCards,dataSource]);
+  }
+  function handleImportAccount() {
+    setCurrentFrame(FramePage.ImportAccount);
     //setAccountCards(currentCards=>[...currentCards,dataSource]);
   }
   function MenubarOnClick(index: number) {
@@ -72,7 +81,8 @@ function MainFrame() {
         return;
       }
       lastBarBtn?.setChecked(false);
-      lastBarBtn = BarBtnRefs.current[index].current;
+
+      setLastBarBtn(BarBtnRefs.current[index].current);
     } catch (e) {
       return;
     }
@@ -95,8 +105,12 @@ function MainFrame() {
   function handleBack() {
     setCurrentFrame(FramePage.MainFrame);
   }
-  function handleSuccess(account_info: CreateAccount_AccountInfo) {
-    AccountListExport.current?.CreateAccount({ mnemonic: account_info.mnemonic, account_name: account_info.account_name })
+  function handleFinish(account_info: AccountInfo,type:string) {
+    if(ACCONT_FRAME_NAME[0]==type){
+      AccountListExport.current?.CreateAccount({ mnemonic: account_info.mnemonic, account_name: account_info.account_name ,privatekey:""});
+    } else if(ACCONT_FRAME_NAME[1]==type){
+      AccountListExport.current?.CreateAccount({ mnemonic: account_info.mnemonic, account_name: account_info.account_name,privatekey:account_info.privatekey })
+    }
     setCurrentFrame(FramePage.MainFrame);
   }
 
@@ -106,6 +120,7 @@ function MainFrame() {
 
   return (
     <div className="MainFrame overflow-hidden">
+      
       {/**
 <Button variant="soft" onClick={() => {
   setMode(mode === 'light' ? 'dark' : 'light');
@@ -140,10 +155,13 @@ function MainFrame() {
         </Grid>
         <Grid xs={9}  >
           <div className={CurrentFrame == FramePage.MainFrame ? "visible" : "hidden"}>
-            <FrameAccountList ref={AccountListExport} onCreateAccount={handleCreateAccount} />
+            <FrameAccountList ref={AccountListExport} onCreateAccount={handleCreateAccount} onImportAccount={handleImportAccount}  />
           </div>
           <div className={CurrentFrame == FramePage.CreateAccount ? "visible" : "hidden"}>
-            <FrameCreateAccount onBackBtnClick={handleBack} onFinish={handleSuccess} />
+            <FrameCreateAccount onBackBtnClick={handleBack} onFinish={handleFinish} name={ACCONT_FRAME_NAME[0]}/>
+          </div>
+          <div className={CurrentFrame == FramePage.ImportAccount ? "visible" : "hidden"}>
+            <FrameImportAccount onBackBtnClick={handleBack} onFinish={handleFinish} name={ACCONT_FRAME_NAME[1]} />
           </div>
         </Grid>
 

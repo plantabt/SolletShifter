@@ -1,0 +1,6 @@
+{
+    "server":"127.0.0.1","port":"9191",
+    "solana":"https://api.devnet.solana.com",
+    "eth":"https://solana-mainnet.g.alchemy.com/v2/alcht_r9gUZZ9NEe7YO06VQ265LJqxsACIWl",
+    "poly":"https://solana-mainnet.g.alchemy.com/v2/alcht_r9gUZZ9NEe7YO06VQ265LJqxsACIWl"
+}

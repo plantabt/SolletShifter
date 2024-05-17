@@ -1,9 +1,10 @@
+use coins::SolanaCoin;
 use solana_client::rpc_client::RpcClient;
 
 pub struct CryptClients{
-    pub solana:RpcClient,
-    pub eth:RpcClient,
-    pub poly:RpcClient
+    pub solana:SolanaCoin,
+    pub eth:SolanaCoin,
+    pub poly:SolanaCoin
 }
 #[allow(non_snake_case)]
 pub enum ResponseStatus{

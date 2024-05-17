@@ -1,0 +1,38 @@
+[package]
+name = "coins"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+bip32="0.3.0"
+
+secp256k1="0.29.0"
+sha2 = "0.10"
+hmac = "0.12"
+hex="0.4.3"
+solana-program="1.18.12"
+ed25519-dalek="1.0.1"
+spl-token="3.5.0"
+solana-sdk = "1.18.12"
+solana-client = "1.18.12"
+tiny-bip39="0.8.2"
+tiny-hderive="0.3.0"
+#walletd= {path = "../walletd-0.2.0/walletd"}
+#walletd_bip39= {path = "../walletd-0.2.0/mnemonics/bip39"}
+#walletd_ethereum="0.2.0"
+thiserror = "1.0.29"
+
+base58 = { version = "0.2.0" }
+QuickLogger={path = "../QuickLogger"}
+anchor-spl="0.30.0"
+ripemd = { version = "0.1.3", default-features = false }
+mpl-token-metadata="4.1.2"
+slip44 = "0.1.4"
+tokio="1.37.0"
+ethers = "0.6.2"
+chrono="0.4.38"
+solana-rpc-client="1.18.12"
+solana-transaction-status="1.18.12"
+serde_json="1.0.117"

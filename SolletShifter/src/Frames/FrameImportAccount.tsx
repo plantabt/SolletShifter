@@ -1,6 +1,6 @@
-import "./FrameCreateAccount.css"
+import "./FrameImportAccount.css"
 import { Person, People, Apartment } from "@mui/icons-material";
-import { Box, Button, Divider, Grid, Input, List, ListItem, ListItemDecorator, Radio, RadioGroup, Snackbar, Step, stepClasses, StepIndicator, stepIndicatorClasses, Stepper, Typography, typographyClasses } from "@mui/joy";
+import { Box, Button, Divider, Grid, Input, List, ListItem, ListItemDecorator, Radio, RadioGroup, Snackbar, Step, stepClasses, StepIndicator, stepIndicatorClasses, Stepper, Textarea, TextField, Typography, typographyClasses } from "@mui/joy";
 import { Fragment } from "react/jsx-runtime";
 import * as bip39 from "bip39"
 import { mnemonicToSeedSync } from "bip39";
@@ -12,7 +12,7 @@ import SelectAllRoundedIcon from '@mui/icons-material/DoneAllRounded';
 import DoneAlldIcon from '@mui/icons-material/ListAltRounded';
 import DirectionButton, { DirectionButtonExportRef, DirectionButtonType } from "../componnet/DirectionButton";
 import BackButton from "../componnet/BackButton";
-import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
+import { ChangeEvent, forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 
 
 
@@ -26,24 +26,21 @@ export interface ComponnetExportRef{
 
 }
 interface ComponnetRef{
+
     name:string;
     onBackBtnClick:()=>void;
     onFinish:(account_info:AccountInfo,type:string)=>void;
 }
 
 
-const FrameCreateAccount = forwardRef<ComponnetExportRef,ComponnetRef>((props,ref)=> {
-    const [_mnemonic,setMnemonic] = useState<string>("");//bip39.generateMnemonic()
+const FrameImportAccount = forwardRef<ComponnetExportRef,ComponnetRef>((props,ref)=> {
+    const [mnemonic,setMnemonic] = useState<string>("");//bip39.generateMnemonic()
     const [AccountName,setAccountName] = useState<string>("");
-    const SnackPopbarRef = useRef<SnackPopbarExportRef | null>(null);
+    const SnackPopbarRef = useRef<SnackPopbarExportRef>(null);
     const [NextBtnTxt,setNextBtnTxt] = useState<string>("Next");
-    const mPhraseList = useRef<PhraseListExport | null>(null);
-
-    async function makePhrase()  {
-  
-        setMnemonic(await WalletSupport.CreateMnemonic());
-        
-      }
+    const [selectedRadio, setSelectedRadio] = useState<string | null>("");
+    const [PrivateKey,setPrivateKey]=useState<string>("");
+    let radioNames=["Secret Phrase","Private Key"];
 
       
    
@@ -52,15 +49,23 @@ const FrameCreateAccount = forwardRef<ComponnetExportRef,ComponnetRef>((props,re
     const [currentStep,setStep]=useState(1);
     
     const PreviousBtn = useRef<DirectionButtonExportRef>(null);
+    //const mPhraseList = useRef<PhraseListExport>(null);
+
     useImperativeHandle(ref,()=>({
 
     }));
     useEffect(()=>{
+        //mPhraseList.current?.setPhrase(mnemonic);
+        if(currentStep==1){
+
+            if(selectedRadio==""){
+                setSelectedRadio(radioNames[0]);
+            }
+        }
         if(currentStep>1){
             
             PreviousBtn.current?.setDisabled(false);
         }else{
-            
             PreviousBtn.current?.setDisabled(true);
         }
         if(currentStep>2){
@@ -69,11 +74,14 @@ const FrameCreateAccount = forwardRef<ComponnetExportRef,ComponnetRef>((props,re
             setNextBtnTxt("Next");
         }
     },[currentStep]);
-    /*
-    useEffect(()=>{
-        mPhraseList?.current?.setPhrase(mnemonic);
-    },[mnemonic]);
-     */
+
+    function handleChhangePrivateKey(event:ChangeEvent<HTMLTextAreaElement>){
+        setPrivateKey(event.target.value)
+    }
+
+    function onPhraseChange(phrase:string){
+        setMnemonic(phrase);
+    }
 
     function handlePrevious(text:string){
         if(currentStep>2){
@@ -84,21 +92,46 @@ const FrameCreateAccount = forwardRef<ComponnetExportRef,ComponnetRef>((props,re
     function handleNext(text:string){
 
         if(currentStep<2){
+            console.log("mnemonic clear");
+            setMnemonic("");
+            setPrivateKey("");
             
-            makePhrase();
-            
-            
-            
+            if(selectedRadio==radioNames[0]){//secret phrase
+                
+            }else if(selectedRadio==radioNames[1]){//private key
+                
+            }
+        }
+        if(currentStep==2){
+            console.log(selectedRadio);
+           
+            if(selectedRadio==radioNames[0]){
+                if(mnemonic.length<=12*3){
+                    showAlert("Please input 12 Secret Phrase!")
+                    return;
+                
+                }
+            }else if(selectedRadio==radioNames[1]){
+                if(PrivateKey.length<32){
+                    showAlert("Please input Private Key!")
+                    return;
+                
+                }
+            }
+
         }
         if(currentStep==3){
-            if(AccountName===""){
-                showAlert("Please input Account Name");
-                return;
-            }
-            setStep(1);
+            
             //onFinish?.({mnemonic:mnemonic,account_name:AccountName});
             //slight convince worth multiply evil ecology harbor fly casino supply minimum arm
-            onFinish?.({mnemonic:_mnemonic,privatekey:"",account_name:AccountName},name);
+            if(AccountName==""){
+                showAlert("Please input Account Name")
+
+                return;
+            
+            }
+            setStep(1);
+            onFinish?.({mnemonic:mnemonic,privatekey:PrivateKey,account_name:AccountName},name);
             
         }else{
             setStep(currentStep<4?currentStep+1:currentStep);
@@ -114,16 +147,17 @@ const FrameCreateAccount = forwardRef<ComponnetExportRef,ComponnetRef>((props,re
         setAccountName(e.target.value);
     }
     async function handleCopyScKey(){
-        await navigator.clipboard.writeText(_mnemonic);
-        showAlert("Copy Secret Phrase success!!")
+        await navigator.clipboard.writeText(mnemonic);
+        showAlert("Past Secret Phrase success!!")
+
     }
     return (
         <Fragment>
             <Grid container spacing={0} sx={{ flexGrow: 1 }} >
-            
+
                 <Grid xs={12} className="flex justify-start items-end mt-4 ml-3">
                     <BackButton className="" onClick={()=>onBackBtnClick?.()}/>
-                    <Typography level="h3" className="ml-[110px] text-blue-50 shadow-lg">Create Account</Typography>
+                    <Typography level="h3" className="ml-[110px] text-blue-50 shadow-lg">Import Account</Typography>
                 </Grid>
             </Grid>
             <Grid xs={12} className="mt-2">
@@ -190,7 +224,7 @@ const FrameCreateAccount = forwardRef<ComponnetExportRef,ComponnetRef>((props,re
                             }>
                                 <div>
                                     <Typography level="title-sm">Step 2</Typography>
-                                    Create Account
+                                    Input Key
                                 </div>
                             </Step>
                             {/** 
@@ -227,7 +261,7 @@ const FrameCreateAccount = forwardRef<ComponnetExportRef,ComponnetRef>((props,re
                         <Grid container spacing={0} sx={{ flexGrow: 1 }} className="w-[100%] min-h-[280px] max-h-[280px] h-[280px] flex justify-center content-center BkgColor">
                             <Grid xs={12} className="mt-2 flex justify-center content-center">
                                 <div className={currentStep==1?"visible":"hidden"}>
-                                    <RadioGroup defaultValue="One Account">
+                                    <RadioGroup defaultValue={radioNames[0]}>
                                         <List
                                             sx={{
                                                 minWidth: 110,
@@ -238,7 +272,7 @@ const FrameCreateAccount = forwardRef<ComponnetExportRef,ComponnetRef>((props,re
                                             
                                             }}
                                         >
-                                            {['One Account', 'Batch Creation'].map((item, index) => (
+                                            {radioNames.map((item, index) => (
                                                 <ListItem variant="solid" key={item} sx={{ bgcolor: `rgb(3 7 18 / var(--tw-bg-opacity))`}}>
                                                     <ListItemDecorator>
                                                         {[<Person />, <People />][index]}
@@ -247,12 +281,12 @@ const FrameCreateAccount = forwardRef<ComponnetExportRef,ComponnetRef>((props,re
                                                         overlay
                                                         value={item}
                                                         label={item}
-                                                    
+                                                        onChange={() => {setSelectedRadio(item);}}
                                                         sx={{ flexGrow: 1, flexDirection: 'row-reverse',fontSize:"0.9rem" }}
                                                         slotProps={{
 
                                                             action: ({ checked }) => ({
-                                                                sx: () => ({
+                                                                sx: (theme) => ({
                                                                     ...(checked && {
                                                                         inset: -1,
                                                                         //border: '2px solid',
@@ -270,27 +304,16 @@ const FrameCreateAccount = forwardRef<ComponnetExportRef,ComponnetRef>((props,re
                                 </div>
                                 {/** create account*/}
                                 <div className={(currentStep==2?"visible":"hidden")+ " mt-2 w-[70%]"} >
-                                    <PhraseList ref={mPhraseList} mnemonic={_mnemonic} title={"Please keep phrase"} haspaste={true} editable={false} phrasecount={12}/>
-                                    {/*
-                                    <Grid container spacing={0} sx={{ flexGrow: 1 }} className="">
-                                            <Grid xs={12} className="mb-3 flex justify-center items-center">
-                                                <Typography level="h3" > Secrect Recover Phrase</Typography>
-                                                <ContentCopyIcon className="ml-2 hover:scale-105 active:scale-110 fill-current text-green-500 " onClick={handleCopyScKey}/>
-                                            </Grid>
-                                            
-                                            
-                                            {mnemonic.split(" ").map((v,i)=>(
-                                                        <Grid xs={4} key={i} className="h-14 flex justify-center items-center mt">
-                                                        <span className={(i>8?"-ml-5 px-[15px] ":"mr-4 ") + " mt-1"} >{i+1}.</span>
-                                                        <Input size="sm"   value={v} className="w-24 h-4"/>
-                                                        </Grid>
-                                            ))}
-                                            <Grid xs={12} className="">
-   
-                                                
-                                            </Grid>
-                                    </Grid>
-                                     */}
+                                    <Grid container spacing={0} sx={{ flexGrow: 1 }} className={`${selectedRadio==radioNames[1]?"visible":"hidden"} flex items-center justify-center`}>
+                                        <Grid xs={6} className="">
+                                            <Typography level="h3" className="mb-4">PrivateKey:</Typography>
+                                        </Grid>
+                                        <Grid xs={6} className="w-[500px]">
+                                            <Textarea maxRows={4} minRows={4} value={PrivateKey} className="" onChange={(event)=>handleChhangePrivateKey(event)}/>
+
+                                        </Grid>
+                                    </Grid>   
+                                    <PhraseList  mnemonic={mnemonic} onChange={onPhraseChange} className={`${selectedRadio==radioNames[0]?"visible":"hidden"}`} title={"Input Phrase"} haspaste={false} editable={true} phrasecount={12}/>
                                 </div>
                                 {/** finish*/}
                                 <div className={(currentStep==3?"visible":"hidden")+ " -mt-20"} >
@@ -323,4 +346,4 @@ const FrameCreateAccount = forwardRef<ComponnetExportRef,ComponnetRef>((props,re
         </Fragment>
     );
 });
-export default FrameCreateAccount;
+export default FrameImportAccount;

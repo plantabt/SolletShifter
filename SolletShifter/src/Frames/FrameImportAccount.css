@@ -1,0 +1,7 @@
+.BkgColor{
+    @apply bg-gray-950 bg-opacity-25
+}
+.DirectionBtn{
+    @apply mx-[48px] mt-[28px] w-[139px] h-[45px] flex justify-center items-center text-gray-950;
+    @apply text-xs;
+}

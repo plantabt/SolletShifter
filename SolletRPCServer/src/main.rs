@@ -8,6 +8,7 @@ use actix_cors::Cors;
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 
 use apis::account::apis::{account_config};
+use coins::SolanaCoin;
 use common::CryptClients;
 use model::Status;
 use serde::{Deserialize, Serialize};
@@ -57,9 +58,9 @@ async fn main()->io::Result<()> {
     QuickLogger::Warn(&format!("************** {} v{} ****************",package_name,package_version));
     QuickLogger::Warn(&format!("***************** {}:{} *******************",server_cfg.server,server_cfg.port));
 
-    let solana = RpcClient::new(server_cfg.solana.clone());
-    let eth = RpcClient::new(server_cfg.eth.clone());
-    let poly = RpcClient::new(server_cfg.poly.clone());
+    let solana = SolanaCoin::new(&server_cfg.solana.clone());
+    let eth = SolanaCoin::new(&server_cfg.eth.clone());
+    let poly = SolanaCoin::new(&server_cfg.poly.clone());
 
     QuickLogger::Warn(&format!("SOLANA:{:?}",server_cfg.solana.clone()));
     QuickLogger::Warn(&format!("ETH:{}",server_cfg.eth.clone()));

@@ -2,6 +2,10 @@
 members=[ 
     "SolletRPCServer",
     "SolletShifter/src-tauri",
-    "QuickLogger"
-, "Config"]
+    "QuickLogger",
+    "Config",
+    "coins",
+
+
+]
 resolver = "2"

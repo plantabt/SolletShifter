@@ -14,7 +14,7 @@ import { CssVarsProvider, extendTheme } from '@mui/joy/styles';
 
 import { Dropdown, Menu, MenuButton, MenuItem, Table } from "@mui/joy";
 import { Box, Grid, List, ListItem, ListItemButton, listItemButtonClasses, Sheet, SvgIconProps, Typography } from "@mui/joy";
-import { forwardRef, Fragment, ReactElement, useEffect, useImperativeHandle, useRef, useState } from "react";
+import React, { forwardRef, Fragment, ReactElement, useEffect, useImperativeHandle, useRef, useState } from "react";
 import TitleIcon from '@mui/icons-material/AccountBalanceRounded'
 import { ArrowDropDown, ReceiptLong } from "@mui/icons-material";
 import SlanaIcon from 'cryptocurrency-icons/32@2x/color/sol@2x.png'
@@ -22,6 +22,7 @@ import EthIcon from 'cryptocurrency-icons/32@2x/color/eth@2x.png'
 import PolyIcon from 'cryptocurrency-icons/32@2x/color/poly@2x.png'
 import { WalletSupport } from '../request/WalletSupport';
 import SnackPopbar, { SnackPopbarExportRef } from './SnackPopbar';
+import { CLocate } from '../request/Locate';
 interface ComponnetProps {
 
   onClick?: (e: any) => void;
@@ -29,48 +30,65 @@ interface ComponnetProps {
   AccountName: string;
   Mnemonic: string;
 }
-export interface ComponnetRef {
-
+export interface AccountInfoCardExport {
+  updateTransfer:()=>void;
+  updateMints:()=>void;
   getTitle: () => string;
 }
 
 
 interface SelectedPubkeyCopy {
-  name: string;
-  icon: ReactElement<SvgIconProps>,
-  addr: string;
+  name?: string;
+  icon?: ReactElement<SvgIconProps>,
+  addr?: string;
 
 }
 
-function createData(
-  date: string,
-  cost: ReactElement<SvgIconProps>,
-  fat: number,
-  carbs: number,
-  protein: number,
-) {
+interface MintItem{
+  name?: string,
+  icon?: ReactElement<SvgIconProps>,
+  balance?: number,
+  token?: string,
+}
+
+interface TransactionRecord{
+  icon?: ReactElement<SvgIconProps>,
+  ispayout?:boolean,
+  datetime?:string,
+  sender?:string,
+  authority?:string,
+  recipient?:string,
+  amount?:number,
+  minttoken?:string,
+  mintname?:string
+}
+/*
+function createData(mint:MintItem) {
   return { date, cost, fat, carbs, protein };
 }
+*/
 
-const rows = [
-  createData('04/12/24', <span className="flex justify-start"><img src={SlanaIcon} className="w-4 h-4 -mt-[1px]" />123.00</span>, 6.0, 24, 4.0),
 
-];
-
-const AccountInfoCard = forwardRef<ComponnetRef, ComponnetProps>((props, ref) => {
-
+const AccountInfoCard = forwardRef<AccountInfoCardExport, ComponnetProps>((props, ref) => {
+  //createData('04/12/24', <span className="flex justify-start"><img src={SlanaIcon} className="w-4 h-4 -mt-[1px]" />123.00</span>, 6.0, 24, 4.0)
+  const [transactionRecords,setTransactionRecords]=useState<TransactionRecord[]>([]);
+  const [rows,setRows] = useState<MintItem[]>([]);
   const { onClick, onClickRemove, AccountName, Mnemonic } = props;
   const [PubkeyList,setPubkeyList]=useState<SelectedPubkeyCopy[]>([]);
   const [_AccountName, setAccountName] = useState<string>(AccountName);
   const [_Mnemonic, setMnemonic] = useState<string>(Mnemonic);
   const SnackPopbarRef = useRef<SnackPopbarExportRef>(null);
 
-  const [seledPubkey, setSeledPubkey] = useState<SelectedPubkeyCopy>({ name: "", icon: <Fragment />, addr: "" });
+  const [seledPubkey, setSeledPubkey] = useState<SelectedPubkeyCopy | null>(null);
   //const [_combinedClassName,setCombinedClassName] = useState(`AccountInfoCard ${className}`);
   //const refCheckState = useRef(checked);
  
   //implement export functions
   useImperativeHandle(ref, () => ({
+    updateMints:()=>{
+    },
+    updateTransfer:()=>{
+    },
     getTitle: () => {
       return "";
     }
@@ -99,21 +117,46 @@ const AccountInfoCard = forwardRef<ComponnetRef, ComponnetProps>((props, ref) =>
     return `${start}${dots}${end}`;
   }
   async function handleCopyContent(){
-    await navigator.clipboard.writeText(seledPubkey.addr);
-    SnackPopbarRef.current?.setTitle(`Copy ${seledPubkey.addr} success!!`);
+    await navigator.clipboard.writeText(seledPubkey?.addr?seledPubkey?.addr:"");
+    SnackPopbarRef.current?.setTitle(`Copy ${seledPubkey?.addr} success!!`);
     SnackPopbarRef.current?.Open(true);
   }
 
   useEffect(() => {
-
-      if(seledPubkey.name==""){
-      setSeledPubkey(PubkeyList[0]);
-      WalletSupport.findAndListTokens(_Mnemonic);
+      
+      if(PubkeyList.length==1){
+        setSeledPubkey(PubkeyList[0]);
+        //GetMints();
+        GetTransactions();
+        /*
+        for(let i in trans){
+          console.log(mints[i].name,mints[i].balance,mints[i].token,CLocate.createCryptoImageUrl(mints[i].name.toLowerCase()));
+          setRows(oldparams=>[...oldparams,{name:mints[i].name,balance:mints[i].balance,token:mints[i].token,icon:<img src={CLocate.createCryptoImageUrl(mints[i].name.toLowerCase())} width={20} height={20} className={'mr-1'}/>}]);
+        }
+        setRows(oldparams=>[...oldparams,{name:mints[i].name,balance:mints[i].balance,token:mints[i].token,icon:<img src={CLocate.createCryptoImageUrl(mints[i].name.toLowerCase())} width={20} height={20} className={'mr-1'}/>}]);
+        */
     }
 
     //let formattedText = formatText(seledPubkey.addr);
-  }, [PubkeyList])
+  }, [PubkeyList]);
 
+  async function GetTransactions(){
+    let trans = await WalletSupport.requestRecentTransfer("http://127.0.0.1:9191","slight convince worth multiply evil ecology harbor fly casino supply minimum arm");
+    for(let i in trans){
+      console.log("trans[i].authority==seledPubkey",trans[i].authority,PubkeyList[0]?.addr);
+      setTransactionRecords(oldparams=>[...oldparams,{ispayout:trans[i].authority==PubkeyList[0]?.addr?true:false, datetime:trans[i].datetime,sender:trans[i].sender,authority:trans[i].authority,recipient:trans[i].recipient,amount:trans[i].amount,minttoken:trans[i].minttoken,mintname:trans[i].mintname}]);
+    }
+  }
+
+
+  async function GetMints(){
+    let mints = await WalletSupport.GetSolanaMints(_Mnemonic);
+    for(let i in mints){
+      console.log(mints[i].name,mints[i].balance,mints[i].token,CLocate.createCryptoImageUrl(mints[i].name.toLowerCase()));
+      setRows(oldparams=>[...oldparams,{name:mints[i].name,balance:mints[i].balance,token:mints[i].token,icon:<img src={CLocate.createCryptoImageUrl(mints[i].name.toLowerCase())} width={20} height={20} className={'mr-1'}/>}]);
+    }
+    console.log(mints);
+  }
   async function init() {
   
     if(PubkeyList.length>0){
@@ -121,7 +164,7 @@ const AccountInfoCard = forwardRef<ComponnetRef, ComponnetProps>((props, ref) =>
       return;
     }
     
-    let pubkey = await WalletSupport.GetSolanaPubKey(_Mnemonic);
+    let pubkey = (await WalletSupport.GetSolanaPubKey(_Mnemonic)).toString();
     setPubkeyList(oldparams=>[...oldparams,{ name: 'SOLANA', icon: <img src={SlanaIcon} className="w-4 h-4" />, addr: pubkey }]);
 
     pubkey = await WalletSupport.generateEthereumPublicKey(_Mnemonic);
@@ -191,7 +234,7 @@ const AccountInfoCard = forwardRef<ComponnetRef, ComponnetProps>((props, ref) =>
         backgroundRepeat: 'no-repeat, no-repeat' // 每个背景的重复方式
       }} className="w-[622px] h-[240px]">
         <Grid xs={3} >
-          <Grid spacing={0} sx={{ flexGrow: 1 }}>
+          <Grid spacing={0} sx={{ flexGrow: 1 }} className="h-48 min-h-48">
             <Grid xs={12} className="mt-3 flex items-start">
               <TitleIcon className=" w-5 h-5 text-left mx-4" />
               <span className="-mx-3 text-sm">{AccountName}</span>
@@ -240,54 +283,28 @@ const AccountInfoCard = forwardRef<ComponnetRef, ComponnetProps>((props, ref) =>
                   })}
                 >
                   <ListItem nested >
-                    <ListItem component="div" startAction={<ReceiptLong />}>
-                      <Typography level="body-xs" sx={{ textTransform: 'uppercase' }}>
-                        TIMELINE
-                      </Typography>
-                    </ListItem>
-                    <List sx={{ '--List-gap': '0px' }}>
-                      <ListItem>
-                        <ListItemButton tabIndex={-1} selected >
-                          <span className="text-xs">04/19/24
-                            <div className="flex items-center justify-between ">
-                              <img src={SlanaIcon} alt="" className="w-5 h-5" />
-                              <div className="text-xs text-green-400">+111120.100</div> {/* 调整图片大小 */}
-                            </div>
-                          </span>
-                        </ListItemButton>
+                   
+                    {transactionRecords.map((item,index)=>(
+                      <ListItemButton tabIndex={-1} selected key={index}>
+                        <span className="text-xs">{item.datetime}
+                          <div className="flex items-center justify-start ">
+                            <div className={`text-[8px]  mr-4 ${item.ispayout?'text-red-400':'text-green-400'}`}>{item.mintname}{item.ispayout?'-':'+'}</div>
+                            <div className={`text-xs ${item.ispayout?'text-red-400':'text-green-400'}`} text-green-400 >{item.amount}</div>
+                          </div>
+                        </span>
+                      </ListItemButton>
+                    ))
+                    }
 
-                      </ListItem>
-                    </List>
                   </ListItem>
-                  <ListItem sx={{ '--List-gap': '0px' }}>
-                    <ListItemButton tabIndex={-1} selected >
-                      <span className="text-xs">04/19/24
-                        <div className="flex items-center justify-between ">
-                          <img src={SlanaIcon} alt="" className="w-5 h-5" />
-                          <div className="text-xs text-red-400">-120.100</div> {/* 调整图片大小 */}
-                        </div>
-                      </span>
-                    </ListItemButton>
-                  </ListItem>
-                  <ListItem sx={{ '--List-gap': '0px' }}>
-                    <ListItemButton tabIndex={-1} selected><span className="text-xs">03/11/24<span className=" text-red-500"><br />-$120.100</span></span></ListItemButton>
-                  </ListItem>
-                  <ListItem sx={{ '--List-gap': '0px' }}>
-                    <ListItemButton tabIndex={-1} selected><span className="text-xs">03/11/24<span className=" text-red-500"><br />-$120.100</span></span></ListItemButton>
-                  </ListItem>
-                  <ListItem sx={{ '--List-gap': '0px' }}>
-                    <ListItemButton tabIndex={-1} selected><span className="text-xs">03/11/24<span className=" text-red-500"><br />-$120.100</span></span></ListItemButton>
-                  </ListItem>
-                  <ListItem sx={{ '--List-gap': '0px' }}>
-                    <ListItemButton tabIndex={-1} selected><span className="text-xs">03/11/24<span className=" text-red-500"><br />-$120.100</span></span></ListItemButton>
-                  </ListItem>
+
                 </List>
               </Box>
             </Grid>
           </Grid>
           <Grid xs={12} className="flex items-start mt-[10px] w-[90%]">
             <span className="text-xs text-left mx-4">Total:</span>
-            <span className="text-xs text-left -mx-2 text-green-400 block overflow-hidden overflow-ellipsis whitespace-nowrap">$32000.000</span>
+            <span className="text-xs text-left -mx-2 text-green-400 block overflow-hidden overflow-ellipsis whitespace-nowrap">0.00</span>
           </Grid>
         </Grid>
         <Grid xs={9} >
@@ -297,7 +314,7 @@ const AccountInfoCard = forwardRef<ComponnetRef, ComponnetProps>((props, ref) =>
               <div style={{ backgroundImage: `url(${PubKeyCpy})`, backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'left center' }} className='w-[400px] mx-4 mt-2 h-8 flex justify-start items-center'>
                 <span className="text-xs text-left mx-3">Pubkey:</span>
                 <Dropdown >
-                  <MenuButton endDecorator={<ArrowDropDown />} className="text-xs min-h-5 max-h-5  w-[300px] max-w-[300px] min-w-[300px] shadow-none border-none rounded-none MenuDropDown">{seledPubkey?.icon}<span> {": "+formatText(seledPubkey?.addr)}</span></MenuButton>
+                  <MenuButton endDecorator={<ArrowDropDown />} className="text-xs min-h-5 max-h-5  w-[300px] max-w-[300px] min-w-[300px] shadow-none border-none rounded-none MenuDropDown">{seledPubkey?.icon}<span> {": "+formatText(seledPubkey?.addr?seledPubkey?.addr:"")}</span></MenuButton>
                   <Menu className="min-w-[380px] max-w-[380px] w-[380px]">
 
                     <ListItem nested className="text-xs ">
@@ -332,11 +349,9 @@ const AccountInfoCard = forwardRef<ComponnetRef, ComponnetProps>((props, ref) =>
                 <Table stickyHeader className="bg-gray-700 ">
                   <thead>
                     <tr >
-                      <th >Date</th>
-                      <th>Cost</th>
-                      <th>From:</th>
-                      <th>To:</th>
-                      <th>Protein&nbsp;(g)</th>
+                      <th className='w-16'><span className='ml-2'>Name</span></th>
+                      <th className='w-24'>Balance</th>
+                      <th>Token</th>
                     </tr>
                   </thead>
 
@@ -345,16 +360,14 @@ const AccountInfoCard = forwardRef<ComponnetRef, ComponnetProps>((props, ref) =>
             </Grid>
             {/** table body */}
             <Grid xs={12} className="flex items-start h-28">
-              <Sheet className="px-3 pr-3 mx-4 w-[92%] h-28 overflow-y-auto overflow-x-hidden bg-gray-700 rounded-b-md -mb-14 border-opacity-15 border-b-4 border-t-4 border-gray-700">
+              <Sheet className="px-2 pr-2 mx-4 w-[92%] h-28 overflow-y-auto overflow-x-hidden bg-gray-700 rounded-b-md -mb-14 border-opacity-15 border-b-4 border-t-4 border-gray-700">
                 <Table >
                   <tbody >
                     {rows.map((row, index) => (
-                      <tr key={index} >
-                        <td className=" rounded-l">{row.date}</td>
-                        <td >{row.cost}</td>
-                        <td >{row.fat}</td>
-                        <td >{row.carbs}</td>
-                        <td className=" rounded-r">{row.protein}</td>
+                      <tr key={index} className="h-8">
+                        <td className="w-16 rounded-l "><span className='-ml-3'>{row.name}</span></td>
+                        <td className='h-8  flex items-center'>{row.icon}{row.balance}</td>
+                        <td className=" rounded-r "><span className='overflow-ellipsis whitespace-nowrap overflow-hidden'>{row.token}</span></td>
                       </tr>
                     ))}
                   </tbody>

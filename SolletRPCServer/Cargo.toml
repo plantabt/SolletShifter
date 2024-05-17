@@ -9,9 +9,29 @@ edition = "2021"
 actix-rt="2.9.0"
 actix-web="4.5.1"
 actix-cors="0.7.0"
-serde={version = "1.0.197",features=["derive"]}
+serde={version = "1.0.201",features=["derive"]}
+serde_json="1.0.117"
 QuickLogger={path="../QuickLogger"}
 Config={path="../Config"}
-solana-client="1.18.10"
-solana-sdk="1.18.10"
+anchor-spl="0.30.0"
+anchor-lang="0.30.0"
+clap = {version = "4.5.4", features = ["derive"]}
+borsh="1.5.0"
+dotenv = "0.15"
+chrono="0.4.38"
+solana-transaction-status="1.18.12"
+sha2 = "0.10"
+hmac = "0.12"
+atoi="2.0.0"
+rand = "0.8"
+bip32="0.3.0"
 bip39="2.0.0"
+solana-sdk = "1.18.12"
+solana-client = "1.18.12"
+ed25519-dalek="1.0.1"
+secp256k1="0.12.0"
+coins={path="../coins"}
+solana-account-decoder="1.18.12"
+solana-program = "1.18.12"
+spl-token = "4.0.0"
+mpl-token-metadata="4.1.2"

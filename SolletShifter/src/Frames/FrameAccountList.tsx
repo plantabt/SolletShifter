@@ -15,15 +15,17 @@ export interface FrameAccountListExportRef{
 }
 interface ComponnetRef{
     onCreateAccount:()=>void;
+    onImportAccount:()=>void;
 }
 export interface CardItem{
     mnemonic:string;
+    privatekey:string;
     account_name:string;
   }
   
 
 const FrameAccountList = forwardRef<FrameAccountListExportRef,ComponnetRef>((props,ref)=> {
-    const {onCreateAccount}=props;
+    const {onCreateAccount,onImportAccount}=props;
     
     const [AccountCards,setAccountCards] = useState<CardItem[]>([]);
 
@@ -45,14 +47,16 @@ const FrameAccountList = forwardRef<FrameAccountListExportRef,ComponnetRef>((pro
      function handleCreateAccount(){
         onCreateAccount?.();
      }
-     
+     function handleImportAccount(){
+        onImportAccount?.();
+     }
     return (
         <Fragment>
            <Grid container spacing={0} sx={{ flexGrow: 1}} >
             
             <Grid xs={12} className="flex content-center">
               <IconButtonEx iconPath={AddIcon} onClick={()=>{handleCreateAccount()}} text="Create Account" id={""}/>
-              <IconButtonEx iconPath={ImportIcon}  text="Import Account" id={""}/>
+              <IconButtonEx iconPath={ImportIcon}  onClick={()=>{handleImportAccount()}} text="Import Account" id={""}/>
             </Grid>
         </Grid>
         <Grid xs={12} className="relative top-14">

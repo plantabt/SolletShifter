@@ -17,7 +17,7 @@ interface ComponnetProps{
 }
 
 export interface DirectionButtonExportRef{
-    setEnabled:(b:boolean)=>void;
+    setDisabled:(b:boolean)=>void;
 }
 const DirectionButton = forwardRef<DirectionButtonExportRef,ComponnetProps>((props,ref)=>{
     
@@ -29,7 +29,7 @@ const DirectionButton = forwardRef<DirectionButtonExportRef,ComponnetProps>((pro
     const commonBkg = (type==0?NextBkg:PreviousBkg)
     const commPos = (type==0?'center center,104px 10px':'center,8px 10px')
     useImperativeHandle(ref,()=>({
-        setEnabled:(b:boolean)=>{
+        setDisabled:(b:boolean)=>{
             setDisabled(b);
         }
     }));
