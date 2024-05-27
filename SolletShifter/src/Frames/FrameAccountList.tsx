@@ -7,8 +7,7 @@ import { Fragment } from "react/jsx-runtime";
 import AddIcon from '../assets/imgs/AddIcon.png'
 import ImportIcon from '../assets/imgs/ImportIcon.png'
 
-import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
-import SnackPopbar, { SnackPopbarExportRef } from "../componnet/SnackPopbar";
+import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 
 export interface FrameAccountListExportRef{
   CreateAccount:(cardInfo:CardItem)=>void;
@@ -41,8 +40,7 @@ const FrameAccountList = forwardRef<FrameAccountListExportRef,ComponnetRef>((pro
         console.log(`handleAccountInfoCardClick:${index}`);
      }
      function handleAccountInfoCardRemoveClick(index:number){
-        setAccountCards(AccountCards.filter((item,idx)=>{return idx!==index}));
-        console.log(index);
+        setAccountCards(AccountCards.filter((_item,idx)=>{return idx!==index}));
      }
      function handleCreateAccount(){
         onCreateAccount?.();

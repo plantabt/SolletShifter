@@ -2,12 +2,12 @@
   "build": {
     "beforeDevCommand": "npm run dev",
     "beforeBuildCommand": "npm run build",
-    "devPath": "http://localhost:1420",
+    "devPath": "http://localhost:14202",
     "distDir": "../dist"
   },
   "package": {
     "productName": "SolletShifter",
-    "version": "1.0.31"
+    "version": "1.0.47"
   },
   "tauri": {
     "allowlist": {

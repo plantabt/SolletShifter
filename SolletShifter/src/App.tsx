@@ -25,8 +25,6 @@ function App() {
 
     setTimeout(()=>{
       appWindow.show();
-   
-      //appWindow.setResizable(false);
     },1000);
   },[]);
  

@@ -1,11 +1,18 @@
 mod model;
 mod common;
 mod apis;
-use std::{io, sync::Arc, time};
+mod db;
+mod jwt;
+use jwt::get_exp;
+use std::{future, io, sync::{Arc, Mutex}, time};
+use dotenv::dotenv;
+use actix::SyncArbiter;
+use actix_extensible_rate_limit::{backend::{memory::InMemoryBackend, SimpleInputFunctionBuilder}, RateLimiter};
 
-
+use dbengine::{utils::{DbActor, DbState}};
+use std::time::Duration;
 use actix_cors::Cors;
-use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{ cookie, http, web, App, HttpServer};
 
 use apis::account::apis::{account_config};
 use coins::SolanaCoin;
@@ -14,35 +21,28 @@ use model::Status;
 use serde::{Deserialize, Serialize};
 use solana_client::rpc_client::RpcClient;
 
+use diesel::{r2d2::{ConnectionManager, Pool}, PgConnection};
+use std::env;
 
 
-#[derive(Clone,Serialize,Debug)]
-struct TestData{
-
-    info:String
-}
-
-
-
-
-#[get("/api/test")]
-async fn test(data:web::Data<TestData>)->impl Responder{
-    QuickLogger::Info(&"api/test".to_string());
-    QuickLogger::Info(&format!("{:?}",data));
-    HttpResponse::Ok().json(Status{status:"test".to_string(),data:data.info.to_string()})
-}
 #[derive(Serialize,Deserialize)]
 struct ServerConfig {
     server: String,
     port:String,
     solana:String,
     eth:String,
-    poly:String
+    poly:String,
+    dbserver:String,
+    dbname:String,
+    dbuser:String,
+    dbpwd:String
 }
 #[actix_web::main]
 async fn main()->io::Result<()> {
+    dotenv().ok();
     let package_name = env!("CARGO_PKG_NAME");
     let package_version = env!("CARGO_PKG_VERSION");
+    
     QuickLogger::init();
 
     let server_cfg :ServerConfig= Config::ReadCfg().unwrap();
@@ -66,13 +66,67 @@ async fn main()->io::Result<()> {
     QuickLogger::Warn(&format!("ETH:{}",server_cfg.eth.clone()));
     QuickLogger::Warn(&format!("POLY:{}",server_cfg.poly.clone()));
 
-    let encrypt_clients = Arc::new(CryptClients{solana,eth,poly});
+    let dbserver = server_cfg.dbserver.clone();
+    let dbname = server_cfg.dbname.clone();
+    let dbuser = server_cfg.dbuser.clone();
+    let dbpwd = server_cfg.dbpwd.clone();
+
+
+    /*
+    let manager = ConnectionManager::<PgConnection>::new(format!("postgres://{}:{}@{}/{}",dbuser,dbpwd,dbserver,dbname));
+    let pool = Pool::builder().build(manager).unwrap();
+    let dbpool = dbengine::create_pool(&dbserver.clone(),&dbuser.clone(),&dbpwd.clone(),&dbname.clone()).unwrap();
+     */
+
+    let dburl = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+    let pool = dbengine::utils::get_pool(&dburl);
+    let db_addr = SyncArbiter::start(5,move ||{
+        DbActor(pool.clone())
+    });
+    let encrypt_clients = Arc::new(Mutex::new(CryptClients{solana,eth,poly}));
+
+    //create db when startup
+    let _=web::block(move||{dbengine::create_db(&dbserver.clone(),&dbuser.clone(),&dbpwd.clone())}).await.unwrap();
+    let backend = InMemoryBackend::builder().build();
+
     HttpServer::new(move||{
-        let cors = Cors::permissive();  // 创建一个允许所有来源的 CORS 实例
-        App::new()
+        //rate limit is 3 times per second
+        let input = SimpleInputFunctionBuilder::new(Duration::from_secs(1), 3)
+                  .real_ip_key()
+                  .build();
+        let middleware = RateLimiter::builder(backend.clone(), input)
+                    .add_headers()
+                    .build();
+         
+        let cors = Cors::permissive()
+                       /* .allowed_origin(&env::var("DOMAIN").unwrap()) // 允许你的前端地址
+                        
+                        .allowed_methods(vec!["GET", "POST"])
+                        .allowed_headers(vec![
+                            http::header::AUTHORIZATION,
+                            http::header::ACCEPT,
+                            http::header::CONTENT_TYPE,
+                        ]) */
+                        .supports_credentials() 
+                        .max_age(Some(get_exp() as usize)); 
+
+        App::new().wrap(middleware.clone())
         .wrap(cors)
+        //.wrap(SessionMiddleware::new(CookieSessionStore::default(), Key::generate().clone()))
+        /*
+        .wrap(
+            SessionMiddleware::builder(CookieSessionStore::default(), secret_key.clone())
+                .session_lifecycle(
+                    PersistentSession::default()
+                        .session_ttl(actix_web::cookie::time::Duration::weeks(2)),
+                )
+                .cookie_secure(false)
+                .build(),
+        ) */
+        //.app_data(web::Data::new(UserSession{users:Mutex::new(Vec::new())}).clone())
+        .app_data(web::Data::new(DbState{db:db_addr.clone()}))
         .app_data(web::Data::new(encrypt_clients.clone()))
-        .service(test)
+        
         .configure(account_config)
     }).bind(format!("{}:{}",server_cfg.server,server_cfg.port))?.run().await
 }

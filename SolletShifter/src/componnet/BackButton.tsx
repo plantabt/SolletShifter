@@ -9,7 +9,7 @@ export interface ComponnetExportRef{
 
 }
 
-const BackButton = forwardRef<ComponnetExportRef,ComponnetProps> ((props,ref)=>{
+const BackButton = forwardRef<ComponnetExportRef,ComponnetProps> ((props,_ref)=>{
     const {className="",onClick} = props;
     const newClass = className + "group w-[124px] h-[30px] flex justify-center items-center BackButton";
 return(

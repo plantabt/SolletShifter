@@ -10,6 +10,7 @@ use sha2::{Digest, Sha256, Sha512};
 use ed25519_dalek::{PublicKey, SecretKey};
 use hex::FromHex;
 
+use solana_sdk::bs58;
 use solana_sdk::signature::Keypair;
 use solana_sdk::signer::{EncodableKeypair, SeedDerivable};
 use solana_sdk::{pubkey::Pubkey};
@@ -144,8 +145,21 @@ pub async fn generate_ethereum_public_key(mnemonic_phrase: &str)->Option<String>
 
 }
 
+pub fn generate_solana_private_key(mnemonic_phrase:&str)-> Option<String>{
+    let keypair = generate_solana_keypair(mnemonic_phrase).expect("generate_solana_private_key error");
+    Some(bs58::encode(keypair.to_bytes())
+    .with_alphabet(bs58::Alphabet::BITCOIN)
+    .into_string())
+}
 
-pub fn generate_solana_public_key(mnemonic_phrase:&str) -> Option<Keypair>{
+pub fn generate_solana_public_key(mnemonic_phrase:&str)-> Option<Keypair>{
+    if let Some(keypair) = generate_solana_keypair(mnemonic_phrase){
+        return Some(keypair);
+    }
+    None
+}
+
+pub fn generate_solana_keypair(mnemonic_phrase:&str) -> Option<Keypair>{
     let derivation_path = "m/44'/501'/0'/0'";
     let bip39_mnemonic = bip39::Mnemonic::from_phrase(mnemonic_phrase,bip39::Language::English).unwrap();
     let seed = bip39::Seed::new(&bip39_mnemonic, "");

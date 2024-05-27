@@ -1,6 +1,10 @@
 {
-    "server":"127.0.0.1","port":"9191",
+    "server":"solletshift.online","port":"9191",
     "solana":"https://api.devnet.solana.com",
     "eth":"https://api.devnet.solana.com",
-    "poly":"https://api.devnet.solana.com"
+    "poly":"https://api.devnet.solana.com",
+    "dbserver":"localhost",
+    "dbname":"ssdb",
+    "dbuser":"postgres",
+    "dbpwd":"abcd1234"
 }

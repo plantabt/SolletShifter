@@ -13,16 +13,16 @@ import { CssVarsProvider, extendTheme } from '@mui/joy/styles';
 
 
 import { Dropdown, Menu, MenuButton, MenuItem, Table } from "@mui/joy";
-import { Box, Grid, List, ListItem, ListItemButton, listItemButtonClasses, Sheet, SvgIconProps, Typography } from "@mui/joy";
-import React, { forwardRef, Fragment, ReactElement, useEffect, useImperativeHandle, useRef, useState } from "react";
+import { Box, Grid, List, ListItem, ListItemButton, listItemButtonClasses, Sheet, SvgIconProps } from "@mui/joy";
+import { forwardRef,  ReactElement, useEffect, useImperativeHandle, useRef, useState } from "react";
 import TitleIcon from '@mui/icons-material/AccountBalanceRounded'
-import { ArrowDropDown, ReceiptLong } from "@mui/icons-material";
+import { ArrowDropDown} from "@mui/icons-material";
 import SlanaIcon from 'cryptocurrency-icons/32@2x/color/sol@2x.png'
 import EthIcon from 'cryptocurrency-icons/32@2x/color/eth@2x.png'
 import PolyIcon from 'cryptocurrency-icons/32@2x/color/poly@2x.png'
-import { WalletSupport } from '../request/WalletSupport';
+import { CryptoSupport } from '../request/CryptoSupport';
 import SnackPopbar, { SnackPopbarExportRef } from './SnackPopbar';
-import { CLocate } from '../request/Locate';
+
 interface ComponnetProps {
 
   onClick?: (e: any) => void;
@@ -72,11 +72,11 @@ function createData(mint:MintItem) {
 const AccountInfoCard = forwardRef<AccountInfoCardExport, ComponnetProps>((props, ref) => {
   //createData('04/12/24', <span className="flex justify-start"><img src={SlanaIcon} className="w-4 h-4 -mt-[1px]" />123.00</span>, 6.0, 24, 4.0)
   const [transactionRecords,setTransactionRecords]=useState<TransactionRecord[]>([]);
-  const [rows,setRows] = useState<MintItem[]>([]);
+  const [rows,_setRows] = useState<MintItem[]>([]);
   const { onClick, onClickRemove, AccountName, Mnemonic } = props;
   const [PubkeyList,setPubkeyList]=useState<SelectedPubkeyCopy[]>([]);
-  const [_AccountName, setAccountName] = useState<string>(AccountName);
-  const [_Mnemonic, setMnemonic] = useState<string>(Mnemonic);
+  const [_AccountName, _setAccountName] = useState<string>(AccountName);
+  const [_Mnemonic, _setMnemonic] = useState<string>(Mnemonic);
   const SnackPopbarRef = useRef<SnackPopbarExportRef>(null);
 
   const [seledPubkey, setSeledPubkey] = useState<SelectedPubkeyCopy | null>(null);
@@ -141,22 +141,22 @@ const AccountInfoCard = forwardRef<AccountInfoCardExport, ComponnetProps>((props
   }, [PubkeyList]);
 
   async function GetTransactions(){
-    let trans = await WalletSupport.requestRecentTransfer("http://127.0.0.1:9191","slight convince worth multiply evil ecology harbor fly casino supply minimum arm");
+    let trans = await CryptoSupport.requestRecentTransfer("http://127.0.0.1:9191","slight convince worth multiply evil ecology harbor fly casino supply minimum arm");
     for(let i in trans){
       console.log("trans[i].authority==seledPubkey",trans[i].authority,PubkeyList[0]?.addr);
       setTransactionRecords(oldparams=>[...oldparams,{ispayout:trans[i].authority==PubkeyList[0]?.addr?true:false, datetime:trans[i].datetime,sender:trans[i].sender,authority:trans[i].authority,recipient:trans[i].recipient,amount:trans[i].amount,minttoken:trans[i].minttoken,mintname:trans[i].mintname}]);
     }
   }
 
-
+/*
   async function GetMints(){
-    let mints = await WalletSupport.GetSolanaMints(_Mnemonic);
+    let mints = await CryptoSupport.GetSolanaMints(_Mnemonic);
     for(let i in mints){
       console.log(mints[i].name,mints[i].balance,mints[i].token,CLocate.createCryptoImageUrl(mints[i].name.toLowerCase()));
       setRows(oldparams=>[...oldparams,{name:mints[i].name,balance:mints[i].balance,token:mints[i].token,icon:<img src={CLocate.createCryptoImageUrl(mints[i].name.toLowerCase())} width={20} height={20} className={'mr-1'}/>}]);
     }
     console.log(mints);
-  }
+  }*/
   async function init() {
   
     if(PubkeyList.length>0){
@@ -164,13 +164,13 @@ const AccountInfoCard = forwardRef<AccountInfoCardExport, ComponnetProps>((props
       return;
     }
     
-    let pubkey = (await WalletSupport.GetSolanaPubKey(_Mnemonic)).toString();
+    let pubkey = (await CryptoSupport.GetSolanaPubKey(_Mnemonic)).toString();
     setPubkeyList(oldparams=>[...oldparams,{ name: 'SOLANA', icon: <img src={SlanaIcon} className="w-4 h-4" />, addr: pubkey }]);
 
-    pubkey = await WalletSupport.generateEthereumPublicKey(_Mnemonic);
+    pubkey = await CryptoSupport.generateEthereumPublicKey(_Mnemonic);
     setPubkeyList(oldparams=>[...oldparams,{ name: 'ETH', icon: <img src={EthIcon} className="w-4 h-4" />, addr: pubkey }]);
 
-    pubkey = await WalletSupport.generatePolygonPublicKey(_Mnemonic);
+    pubkey = await CryptoSupport.generatePolygonPublicKey(_Mnemonic);
     setPubkeyList(oldparams=>[...oldparams,{ name: 'POLY', icon: <img src={PolyIcon} className="w-4 h-4" />, addr: pubkey }]);
     
     

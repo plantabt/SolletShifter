@@ -4,10 +4,10 @@ import "./SnackPopbar.css";
 import '@fontsource/inter';
 import 'tailwindcss/tailwind.css';
 
-import AccountButtonBkg from '../assets/imgs/AccountButtonBkg.png'
-import { forwardRef, ReactElement, useEffect, useImperativeHandle,  useState } from "react";
+
+import { forwardRef, useEffect, useImperativeHandle,  useState } from "react";
 import PlaylistAddCheckCircleRoundedIcon from '@mui/icons-material/PlaylistAddCheckCircleRounded';
-import { Button, Snackbar } from "@mui/joy";
+import { Snackbar } from "@mui/joy";
 
 
 interface SnackPopbarProps {
@@ -19,8 +19,8 @@ interface SnackPopbarProps {
     Open:(b:boolean)=>void;
     setTitle:(text:string)=>void;
 }
-const SnackPopbar= forwardRef<SnackPopbarExportRef, SnackPopbarProps>((props, ref)  => {  
-    const {  onClick=null, } = props;
+const SnackPopbar= forwardRef<SnackPopbarExportRef, SnackPopbarProps>((_props, ref)  => {  
+    //const {onClick=null } = props;
     const [open, setOpen] = useState(false);
     const [tipInfo,setTipInfo]=useState<string>("");
     //const [combinedClassName,setCombinedClassName] = useState(`group SnackPopbar ${className}`);
@@ -38,11 +38,7 @@ const SnackPopbar= forwardRef<SnackPopbarExportRef, SnackPopbarProps>((props, re
       }
     }));
 
-    function handleOnclick(e:any){
 
-      onClick?.(e);
-    }
-    
 
     useEffect(()=>{
 

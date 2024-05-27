@@ -1,13 +1,14 @@
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
-import { clusterApiUrl, Connection, Keypair, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
+import {  Connection, Keypair, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 import * as bip39 from "bip39"
-import { mnemonicToSeedSync } from "bip39";
 import { derivePath } from "ed25519-hd-key";
 import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
 //import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
 import { ethers } from "ethers";
-import { Metaplex, keypairIdentity } from '@metaplex-foundation/js';
+import { Metaplex } from '@metaplex-foundation/js';
 import { HttpReqeust } from "./HttpReqeust";
+import {LoginRequest, RegisterRequest, QueryBalance} from "./common";
+import bs58 from 'bs58';
 export interface MintInfo{
   name:string;
   balance:number;
@@ -24,20 +25,32 @@ export interface TansferInfo{
 }
 //const _net = 'https://misty-responsive-wave.solana-mainnet.quiknode.pro/0b50ba41d8f8b72d90d19ed02a447598a5025036/'
 const _net =  'https://solana-mainnet.g.alchemy.com/v2/alcht_r9gUZZ9NEe7YO06VQ265LJqxsACIWl';
-export class WalletSupport {
-  public static async requestBalance(server_port:any,phrase:any,privekey:any=""){
-    let url = server_port+"/account/api/balance";
-    HttpReqeust.PostData(url, { phrase:phrase,privekey:privekey})
+export class CryptoSupport {
+  public static async requestBalance(server:any,reqBalanceData:QueryBalance){
+    let url = server+"/account/api/balance";
+    HttpReqeust.PostData(url, reqBalanceData)
     .then(data => {
-      console.log(data); // 从服务器解析的 JSON 数据
+      return data; // 从服务器解析的 JSON 数据
     })
     .catch((error) => {
       console.error('Error:', error);
     });
 
   }
-  public static async requestRecentTransfer(server_port:any,phrase:any,privekey:any=""):Promise<any>{
-    let url = server_port+"/account/api/rttransfer";
+
+  public static async RegisterAccount(server:string,regData:RegisterRequest) {
+    let url = server+"/account/api/register";
+
+    return await HttpReqeust.post(url,regData);
+  }
+
+  public static async Login(server:string, regData:LoginRequest) {
+    let url = server+"/account/api/login";
+    return await HttpReqeust.post(url,regData);
+  }
+
+  public static async requestRecentTransfer(server:any,phrase:any,privekey:any=""):Promise<any>{
+    let url = server+"/account/api/rttransfer";
     let transactions=null;
     await HttpReqeust.PostData(url, { phrase:phrase,privekey:privekey})
     .then(data => {
@@ -70,7 +83,7 @@ export class WalletSupport {
     let transferInfo = new Array<TansferInfo>();
     const connection = new Connection(_net, 'confirmed');
   
-    const publicKey = await WalletSupport.GetSolanaPubKey(mnemonic);
+    const publicKey = await CryptoSupport.GetSolanaPubKey(mnemonic);
    
     const recentSignatures = await connection.getSignaturesForAddress(publicKey, {}, "confirmed");
     
@@ -86,12 +99,12 @@ export class WalletSupport {
     recentTransactions.forEach(tx => {
       if (tx && tx.transaction && tx.meta) {
         console.log(`Transaction fee: ${tx.meta.fee / LAMPORTS_PER_SOL} SOL`);
-        tx.transaction.message.instructions.forEach(async (instruction, index) => {
+        tx.transaction.message.instructions.forEach(async (instruction) => {
           if (('parsed' in instruction) && instruction.program === "spl-token") {
             if('tokenAmount' in instruction.parsed.info){
               const blockTime = tx.blockTime==null?0:tx.blockTime;
               const dateTime = new Date(blockTime * 1000).toISOString();
-              let mintname = await WalletSupport.getTokenName(instruction.parsed.info.mint);
+              let mintname = await CryptoSupport.getTokenName(instruction.parsed.info.mint);
               let tokenAmount = instruction.parsed.info.tokenAmount;
               transferInfo.push({
                 datetime:dateTime,
@@ -123,7 +136,7 @@ export class WalletSupport {
     const connection = new Connection(_net, "confirmed");
 
     // 假设这是你的公钥
-    const publicKey = await WalletSupport.GetSolanaPubKey(mnemonic);
+    const publicKey = await CryptoSupport.GetSolanaPubKey(mnemonic);
 
     // 获取最近的签名信息
     const recentSignatures = await connection.getSignaturesForAddress(publicKey, {}, "confirmed");
@@ -194,10 +207,10 @@ export class WalletSupport {
       console.log('无效的助记词');
       return new Array<MintInfo>();
     }
-    WalletSupport.GetTransactionDetails(mnemonic);
+    CryptoSupport.GetTransactionDetails(mnemonic);
     console.log(_net);
     console.log("Mnemonic:", mnemonic);
-    const publicKey =await WalletSupport.GetSolanaPubKey(mnemonic);
+    const publicKey =await CryptoSupport.GetSolanaPubKey(mnemonic);
     //let publicKey = keypair.publicKey;
     console.log("Public bytes:", publicKey.toBytes());
     console.log("Public Key:", publicKey.toString());
@@ -215,7 +228,7 @@ export class WalletSupport {
         let tokenMint = tokenAccountInfo.mint;
         console.log(tokenAccountInfo);
         //console.log(`Token Mint: ${tokenMint}, Balance: ${tokenAmount}`);
-        let mintname = await WalletSupport.getTokenName(tokenMint);
+        let mintname = await CryptoSupport.getTokenName(tokenMint);
         MintList.push({name:mintname,balance:tokenAmount,token:tokenMint});
       }
       return MintList;
@@ -225,18 +238,27 @@ export class WalletSupport {
   public static async CreateMnemonic():Promise<string> {
     return await bip39.generateMnemonic()
   }
-  public static async GetPrivateKey(mnemonic: string):Promise<Uint8Array> {
-    let seed = await bip39.mnemonicToSeedSync(mnemonic);
-    return Keypair.fromSeed(seed.slice(0, 32)).secretKey;
-  }
-  public static async GetSolanaPubKey(mnemonic: string):Promise<PublicKey> {
+
+
+  public static async GetSolanaKeypair(mnemonic: string):Promise<Keypair> {
     const derivationPath = "m/44'/501'/0'/0'";  // 根据需要修改路径
     const seed = await bip39.mnemonicToSeed(mnemonic);  
     const  derive  = derivePath(derivationPath, seed.toString('hex'));
-    return Keypair.fromSeed(derive.key.slice(0, 32)).publicKey;
+    return Keypair.fromSeed(derive.key.slice(0, 32));
+  }
+  public static async GetSolanaPrivateKey(mnemonic: string):Promise<string> {
+    let keypair = await this.GetSolanaKeypair(mnemonic);
+    let secretKey = keypair.secretKey;
+    let hexString = bs58.encode(secretKey);
+    return hexString;
+  }
+
+  public static async GetSolanaPubKey(mnemonic: string):Promise<PublicKey> {
+    let keypair = await this.GetSolanaKeypair(mnemonic);
+    return keypair.publicKey;
   }
   public static async generatePolygonPublicKey(mnemonic: string): Promise<string> {
-    return await WalletSupport.generateEthereumPublicKey(mnemonic);
+    return await CryptoSupport.generateEthereumPublicKey(mnemonic);
   }
   public static async generateEthereumPublicKey(mnemonic: string): Promise<string> {
     const seed = await bip39.mnemonicToSeed(mnemonic);

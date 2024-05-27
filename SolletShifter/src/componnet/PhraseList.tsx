@@ -49,9 +49,9 @@ const BackButton = forwardRef<PhraseListExport,ComponnetProps> ((props,ref)=>{
 
     useEffect(()=>{
         if(mnemonic!=""){
-
             _setPhrases(mnemonic.split(" "));
-            
+        }else{
+            _setPhrases([]);
         }
     },[mnemonic]);
 

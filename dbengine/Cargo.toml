@@ -1,0 +1,16 @@
+[package]
+name = "dbengine"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rusqlite = "0.31.0"
+tokio-postgres = "0.7.10"
+tokio = { version = "1.37.0", features = ["full"] }
+deadpool-postgres="0.13.2"
+QuickLogger={path="../QuickLogger"}
+serde="1.0.202"
+chrono="0.4.38"
+postgres="0.19.7"
+actix="0.13.3"
+diesel="2.1.6"

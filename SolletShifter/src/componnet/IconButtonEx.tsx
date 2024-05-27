@@ -5,7 +5,7 @@ import '@fontsource/inter';
 import 'tailwindcss/tailwind.css';
 
 import AccountButtonBkg from '../assets/imgs/AccountButtonBkg.png'
-import { forwardRef, ReactElement, useEffect, useImperativeHandle,  useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle,  useState } from "react";
 
 
 interface IconButtonExProps {
@@ -23,7 +23,7 @@ interface IconButtonExProps {
 const IconButtonEx= forwardRef<IconButtonExRef, IconButtonExProps>((props, ref)  => {  
     const { text="", onClick=null, className = '', iconPath="", id=""} = props;
 
-    const [combinedClassName,setCombinedClassName] = useState(`group IconButtonEx ${className}`);
+    const [combinedClassName,_setCombinedClassName] = useState(`group IconButtonEx ${className}`);
     //const refCheckState = useRef(checked);
 
 

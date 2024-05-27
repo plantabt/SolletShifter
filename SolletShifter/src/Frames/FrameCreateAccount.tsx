@@ -1,14 +1,11 @@
 import "./FrameCreateAccount.css"
-import { Person, People, Apartment } from "@mui/icons-material";
-import { Box, Button, Divider, Grid, Input, List, ListItem, ListItemDecorator, Radio, RadioGroup, Snackbar, Step, stepClasses, StepIndicator, stepIndicatorClasses, Stepper, Typography, typographyClasses } from "@mui/joy";
+import { Person, People} from "@mui/icons-material";
+import { Box, Divider, Grid, Input, List, ListItem, ListItemDecorator, Radio, RadioGroup, Step, stepClasses, StepIndicator, stepIndicatorClasses, Stepper, Typography, typographyClasses } from "@mui/joy";
 import { Fragment } from "react/jsx-runtime";
-import * as bip39 from "bip39"
-import { mnemonicToSeedSync } from "bip39";
-import ContentCopyIcon from '@mui/icons-material/ContentCopyRounded'
+
 import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
 import AppRegistrationRoundedIcon from '@mui/icons-material/Swipe';
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
-import SelectAllRoundedIcon from '@mui/icons-material/DoneAllRounded';
 import DoneAlldIcon from '@mui/icons-material/ListAltRounded';
 import DirectionButton, { DirectionButtonExportRef, DirectionButtonType } from "../componnet/DirectionButton";
 import BackButton from "../componnet/BackButton";
@@ -17,9 +14,8 @@ import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "re
 
 
 import SnackPopbar, { SnackPopbarExportRef } from "../componnet/SnackPopbar";
-import {TOKEN_PROGRAM_ID } from "@solana/spl-token";
 
-import { WalletSupport } from "../request/WalletSupport";
+import { CryptoSupport } from "../request/CryptoSupport";
 import PhraseList, { PhraseListExport } from "../componnet/PhraseList";
 import { AccountInfo } from "../commmon/common";
 export interface ComponnetExportRef{
@@ -41,7 +37,7 @@ const FrameCreateAccount = forwardRef<ComponnetExportRef,ComponnetRef>((props,re
 
     async function makePhrase()  {
   
-        setMnemonic(await WalletSupport.CreateMnemonic());
+        setMnemonic(await CryptoSupport.CreateMnemonic());
         
       }
 
@@ -75,13 +71,13 @@ const FrameCreateAccount = forwardRef<ComponnetExportRef,ComponnetRef>((props,re
     },[mnemonic]);
      */
 
-    function handlePrevious(text:string){
+    function handlePrevious(_text:string){
         if(currentStep>2){
            
         }
         setStep(currentStep>1?currentStep-1:currentStep);
     }
-    function handleNext(text:string){
+    function handleNext(_text:string){
 
         if(currentStep<2){
             
@@ -113,10 +109,11 @@ const FrameCreateAccount = forwardRef<ComponnetExportRef,ComponnetRef>((props,re
     function handleChangeAccountName(e:any){
         setAccountName(e.target.value);
     }
+    /*
     async function handleCopyScKey(){
         await navigator.clipboard.writeText(_mnemonic);
         showAlert("Copy Secret Phrase success!!")
-    }
+    }*/
     return (
         <Fragment>
             <Grid container spacing={0} sx={{ flexGrow: 1 }} >

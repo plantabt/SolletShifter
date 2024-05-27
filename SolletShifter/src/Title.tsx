@@ -10,13 +10,15 @@ import MinmmizeIcon from '@mui/icons-material/Minimize';
 import { appWindow } from "@tauri-apps/api/window";
 import { useEffect, useRef, useState } from "react";
 import LoginFrame, { LoginFrameExportRef } from "./Frames/LoginFrame";
+import { CallRustDelegate } from "./commmon/CallRustDelegate";
 function Title() {  
   const [wintitle,setWintitle] = useState("") ;
   const [version,setVer] = useState("") ;
   
   async function getWindowTitle(){
     setWintitle( await appWindow.title());
-    setVer("1.0.37");
+    
+    setVer(await CallRustDelegate.GetVersion());
     console.log("windowtitle:",wintitle,wintitle.substring(0,6),wintitle.substring(6,wintitle.length));
   }
   getWindowTitle();
