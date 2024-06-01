@@ -3,7 +3,7 @@ import "./App.css";
 import '@fontsource/inter';
 import 'tailwindcss/tailwind.css';
 
-import { useEffect } from "react";
+import { createContext, useEffect } from "react";
 
 import { useColorScheme } from '@mui/joy/styles';
 
@@ -11,13 +11,16 @@ import { appWindow } from "@tauri-apps/api/window";
 import Title from "./Title";
 import MainFrame from "./MainFrame";
 import { Buffer } from 'buffer';
+import { LoginInfo } from "./commmon/common";
 window.Buffer = Buffer;
+
 
 //import axios from "axios";
 
 //import { HttpReqeust } from "./request/HttpReqeust";
 
 function App() {  
+
   const {  setMode } = useColorScheme();
 
   setMode('dark');
@@ -47,9 +50,8 @@ function App() {
 
   return (
     <div className="container">
-
+  
           <Title />
-
           <MainFrame/>
 
     </div>

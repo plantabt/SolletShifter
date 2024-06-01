@@ -8,13 +8,18 @@ import { Button, Grid, Typography } from "@mui/joy";
 import CloseIcon from '@mui/icons-material/Close';
 import MinmmizeIcon from '@mui/icons-material/Minimize';
 import { appWindow } from "@tauri-apps/api/window";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import LoginFrame, { LoginFrameExportRef } from "./Frames/LoginFrame";
 import { CallRustDelegate } from "./commmon/CallRustDelegate";
+//import { useDispatch, useSelector } from "react-redux";
+//import { RootState } from "./store";
 function Title() {  
+
+  
+  const [loginName,setLoginName]=useState<String>("Login");
   const [wintitle,setWintitle] = useState("") ;
   const [version,setVer] = useState("") ;
-  
+
   async function getWindowTitle(){
     setWintitle( await appWindow.title());
     
@@ -29,7 +34,9 @@ function Title() {
   function miniWindow(){
     appWindow.minimize();
   }
-
+  function onLoggedin(name:String){
+    setLoginName(name);
+  }
   useEffect(()=>{
     
   },[]);
@@ -52,11 +59,11 @@ function Title() {
           <MinmmizeIcon className="minmmize_btn" onClick={miniWindow}/>
           <CloseIcon className="close_btn" onClick={closeWindow}/>
           
-          <Button onClick={()=>loginFrame.current?.open(true)} variant="outlined" className="text-[12px] h-[26px] min-h-[26px] max-h-[26px]">Login</Button>
+          <Button onClick={()=>loginFrame.current?.open(true)} variant="outlined" className="text-[12px] h-[26px] min-h-[26px] max-h-[26px]">{loginName}</Button>
         </Grid>
        
       </Grid>
-      <LoginFrame ref={loginFrame}/>
+      <LoginFrame ref={loginFrame} onLoggedin={(name)=>onLoggedin(name)}/>
       </div>
   );
 }

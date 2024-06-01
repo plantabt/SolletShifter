@@ -1,5 +1,7 @@
 use std::{env, sync::Mutex, time::{SystemTime, UNIX_EPOCH}};
+use actix_web::Error;
 use bip32::secp256k1::elliptic_curve::bigint::Encoding;
+use log::error;
 use serde::{Deserialize, Serialize};
 use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Header, Validation};
 
@@ -49,7 +51,16 @@ pub fn get_exp()->u64{
     env::var("JWT_EXPIRATION").unwrap().parse::<u64>().unwrap()
 }
 
-pub fn save_token(token:&str){
-    //let mut token_list = TOKEN_LIST.lock().unwrap();
-    //token_list.push(token.to_string());
+pub fn token_decode(token:&str)->Option<UserClaims>{
+    let dekey = DecodingKey::from_secret(format!("{}{}",get_jwt_secret(),get_jwt_salt()).as_bytes());
+    match decode::<UserClaims>(token,&dekey, &Validation::default()){
+        Ok(token_data) => {
+            return Some(token_data.claims)
+        },
+        Err(e) => {
+            error!("token_decode error: {:#?}",e);
+        },
+    }
+    None
 }
+ 

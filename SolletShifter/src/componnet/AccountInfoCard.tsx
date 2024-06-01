@@ -22,11 +22,12 @@ import EthIcon from 'cryptocurrency-icons/32@2x/color/eth@2x.png'
 import PolyIcon from 'cryptocurrency-icons/32@2x/color/poly@2x.png'
 import { CryptoSupport } from '../request/CryptoSupport';
 import SnackPopbar, { SnackPopbarExportRef } from './SnackPopbar';
+import { MintItem } from '../commmon/common';
 
 interface ComponnetProps {
 
   onClick?: (e: any) => void;
-  onClickRemove?: (e: any) => void;
+  onClickRemove?: (privatekey:string) => void;
   AccountName: string;
   Mnemonic: string;
 }
@@ -44,12 +45,7 @@ interface SelectedPubkeyCopy {
 
 }
 
-interface MintItem{
-  name?: string,
-  icon?: ReactElement<SvgIconProps>,
-  balance?: number,
-  token?: string,
-}
+
 
 interface TransactionRecord{
   icon?: ReactElement<SvgIconProps>,
@@ -96,8 +92,10 @@ const AccountInfoCard = forwardRef<AccountInfoCardExport, ComponnetProps>((props
   function handleOnClick(e: any) {
     onClick?.(e);
   }
-  function handleDelBtn(e: any) {
-    onClickRemove?.(e);
+  async function handleDelBtn(e: any) {
+    let privkey = await CryptoSupport.GenerateSolanaPrivateKey(_Mnemonic);
+    onClickRemove?.(privkey);
+   
   }
   function formatText(text: string) {
     if (text == undefined) {

@@ -1,5 +1,5 @@
 
-use crate::db::account::db_models::{Account, CreateAccount, UpdateLoginDb};
+use crate::db::account::models::{Account, CreateAccount, UpdateLoginDb};
 use chrono::{DateTime, Utc};
 use dbengine::utils::DbActor;
 use sha2::digest::block_buffer::Error;

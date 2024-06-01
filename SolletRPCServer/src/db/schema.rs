@@ -1,7 +1,8 @@
+
 // @generated automatically by Diesel CLI.
 
 diesel::table! {
-    account (id) {
+    account (id, privatekey) {
         id -> Int4,
         name -> Text,
         privatekey -> Text,
@@ -13,3 +14,18 @@ diesel::table! {
         login_ip -> Nullable<Text>,
     }
 }
+
+diesel::table! {
+    subaccount (id) {
+        id -> Int4,
+        account -> Jsonb,
+        owner -> Text,
+        create_time -> Timestamptz, 
+        privatekey -> Text,
+    }
+}
+
+diesel::allow_tables_to_appear_in_same_query!(
+    account,
+    subaccount,
+);

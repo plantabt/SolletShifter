@@ -41,5 +41,7 @@ solana-program = "1.18.12"
 spl-token = "4.0.0"
 mpl-token-metadata="4.1.2"
 dbengine= {path="../dbengine"}
-diesel = { version = "2.0.2", features = ["postgres", "r2d2", "chrono"] }
+diesel = { version = "2.0.2", features = ["postgres", "r2d2", "chrono","serde_json"] }
 log="0.4.21"
+futures="0.3.30"
+futures-util="0.3.30"

@@ -1,7 +1,7 @@
 use actix::Message;
 use chrono::{DateTime, Utc};
 use diesel::QueryResult;
-use crate::db::account::db_models::{Account,UpdateLoginDb};
+use crate::db::account::models::{Account,UpdateLoginDb};
 #[derive(Message)]
 #[rtype(result = "QueryResult<Vec<Account>>")]
 pub struct FetchAccount{

@@ -8,8 +8,10 @@ use diesel::{prelude::Insertable, AsChangeset, Queryable};
 
 use chrono::{DateTime, NaiveDateTime, Utc};
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 
 use crate::db::schema::account;
+
 //#[derive(Queryable, Debug, Serialize)]
 
 #[derive(Queryable, Debug, Serialize)]
@@ -28,6 +30,7 @@ pub struct Account {
     #[serde(skip_serializing)]
     pub login_ip: Option<String>,
 }
+
 
 #[derive( Debug, Serialize,Insertable,Clone)]
 #[diesel(table_name=account)]

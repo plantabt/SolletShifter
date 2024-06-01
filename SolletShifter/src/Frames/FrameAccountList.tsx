@@ -11,10 +11,12 @@ import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 
 export interface FrameAccountListExportRef{
   CreateAccount:(cardInfo:CardItem)=>void;
+  
 }
 interface ComponnetRef{
     onCreateAccount:()=>void;
     onImportAccount:()=>void;
+    onRemoveItem:(index:number,privatekey:string)=>Promise<boolean>;
 }
 export interface CardItem{
     mnemonic:string;
@@ -24,7 +26,7 @@ export interface CardItem{
   
 
 const FrameAccountList = forwardRef<FrameAccountListExportRef,ComponnetRef>((props,ref)=> {
-    const {onCreateAccount,onImportAccount}=props;
+    const {onCreateAccount,onImportAccount,onRemoveItem}=props;
     
     const [AccountCards,setAccountCards] = useState<CardItem[]>([]);
 
@@ -33,14 +35,14 @@ const FrameAccountList = forwardRef<FrameAccountListExportRef,ComponnetRef>((pro
         setAccountCards(currentCards=>[...currentCards,cardInfo]);
       }
     }));
-    useEffect(()=>{
 
-    },[]);
     function handleAccountInfoCardClick(index:number){
         console.log(`handleAccountInfoCardClick:${index}`);
      }
-     function handleAccountInfoCardRemoveClick(index:number){
-        setAccountCards(AccountCards.filter((_item,idx)=>{return idx!==index}));
+     async function handleAccountInfoCardRemoveClick(index:number,privatekey:string){
+        if(await onRemoveItem(index,privatekey)){
+          setAccountCards(AccountCards.filter((_item,idx)=>{return idx!==index}));
+        }
      }
      function handleCreateAccount(){
         onCreateAccount?.();
@@ -65,7 +67,7 @@ const FrameAccountList = forwardRef<FrameAccountListExportRef,ComponnetRef>((pro
             {
               AccountCards.map((item,index)=>(
                 <Grid xs={12} key={index}>
-                  <AccountInfoCard onClickRemove={()=>handleAccountInfoCardRemoveClick(index)} onClick={()=>handleAccountInfoCardClick(index)} AccountName={item.account_name} Mnemonic={item.mnemonic}/>
+                  <AccountInfoCard onClickRemove={(privatekey)=>handleAccountInfoCardRemoveClick(index,privatekey)} onClick={()=>handleAccountInfoCardClick(index)} AccountName={item.account_name} Mnemonic={item.mnemonic}/>
                 </Grid>
               )) 
              }

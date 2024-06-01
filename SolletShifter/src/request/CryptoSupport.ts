@@ -49,6 +49,11 @@ export class CryptoSupport {
     return await HttpReqeust.post(url,regData);
   }
 
+  public static async balance(server:string, regData:QueryBalance) {
+    let url = server+"/account/api/balance";
+    return await HttpReqeust.post(url,regData);
+  }
+
   public static async requestRecentTransfer(server:any,phrase:any,privekey:any=""):Promise<any>{
     let url = server+"/account/api/rttransfer";
     let transactions=null;
@@ -246,7 +251,7 @@ export class CryptoSupport {
     const  derive  = derivePath(derivationPath, seed.toString('hex'));
     return Keypair.fromSeed(derive.key.slice(0, 32));
   }
-  public static async GetSolanaPrivateKey(mnemonic: string):Promise<string> {
+  public static async GenerateSolanaPrivateKey(mnemonic: string):Promise<string> {
     let keypair = await this.GetSolanaKeypair(mnemonic);
     let secretKey = keypair.secretKey;
     let hexString = bs58.encode(secretKey);

@@ -121,10 +121,26 @@ pub async  fn create_db(host:&str,user:&str,pwd:&str) -> Result<(), Error> {
             CONSTRAINT "UQ_account_privatekey" UNIQUE ("privatekey")
           );
           
+
+
+          CREATE TABLE "public"."subaccount" ( 
+            "id" SERIAL,
+            "account" JSONB NOT NULL,
+            "owner" TEXT NOT NULL,
+            "create_time" TIMESTAMP WITH TIME ZONE NOT NULL,
+            "privatekey" TEXT NOT NULL,
+            CONSTRAINT "subaccount_pkey" PRIMARY KEY ("id")
+          );
           CREATE INDEX "IX_account_id" 
-          ON "account" (
+          ON "public"."account" (
             "id" ASC
           );
+          CREATE INDEX "IX_subaccount_id" 
+          ON "public"."subaccount" (
+            "id" ASC
+          );
+          
+          
         "#
     ).await?;
 

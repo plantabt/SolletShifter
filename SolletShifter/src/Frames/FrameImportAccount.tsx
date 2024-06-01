@@ -30,6 +30,8 @@ interface ComponnetRef{
 
 
 const FrameImportAccount = forwardRef<ComponnetExportRef,ComponnetRef>((props,ref)=> {
+    const {onBackBtnClick,onFinish,name}=props;
+    
     const [mnemonic,setMnemonic] = useState<string>("");//bip39.generateMnemonic()
     const [AccountName,setAccountName] = useState<string>("");
     const SnackPopbarRef = useRef<SnackPopbarExportRef>(null);
@@ -41,7 +43,7 @@ const FrameImportAccount = forwardRef<ComponnetExportRef,ComponnetRef>((props,re
       
    
   
-    const {onBackBtnClick,onFinish,name}=props;
+    
     const [currentStep,setStep]=useState(1);
     
     const PreviousBtn = useRef<DirectionButtonExportRef>(null);
@@ -152,9 +154,9 @@ const FrameImportAccount = forwardRef<ComponnetExportRef,ComponnetRef>((props,re
         <Fragment>
             <Grid container spacing={0} sx={{ flexGrow: 1 }} >
 
-                <Grid xs={12} className="flex justify-start items-end mt-4 ml-3">
+                <Grid xs={12} className="flex justify-start items-end mt-4 ml-8">
                     <BackButton className="" onClick={()=>onBackBtnClick?.()}/>
-                    <Typography level="h3" className="ml-[110px] text-blue-50 shadow-lg">Import Account</Typography>
+                    <Typography level="h3" className="ml-[90px] text-blue-50 shadow-lg">Import Account</Typography>
                 </Grid>
             </Grid>
             <Grid xs={12} className="mt-2">

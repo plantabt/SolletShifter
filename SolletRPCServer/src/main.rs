@@ -1,9 +1,11 @@
-mod model;
+mod status;
 mod common;
-mod apis;
+mod routes;
+mod middleware;
 mod db;
 mod jwt;
 use jwt::get_exp;
+use middleware::token_checker::{TokenChecker, TokenCheckerMiddleware};
 use std::{future, io, sync::{Arc, Mutex}, time};
 use dotenv::dotenv;
 use actix::SyncArbiter;
@@ -14,10 +16,10 @@ use std::time::Duration;
 use actix_cors::Cors;
 use actix_web::{ cookie, http, web, App, HttpServer};
 
-use apis::account::apis::{account_config};
+use routes::{account::impls::account_routes, subaccount::impls::subaccount_routes};
 use coins::SolanaCoin;
 use common::CryptClients;
-use model::Status;
+use status::RepStatus;
 use serde::{Deserialize, Serialize};
 use solana_client::rpc_client::RpcClient;
 
@@ -37,6 +39,8 @@ struct ServerConfig {
     dbuser:String,
     dbpwd:String
 }
+
+
 #[actix_web::main]
 async fn main()->io::Result<()> {
     dotenv().ok();
@@ -91,26 +95,15 @@ async fn main()->io::Result<()> {
 
     HttpServer::new(move||{
         //rate limit is 3 times per second
-        let input = SimpleInputFunctionBuilder::new(Duration::from_secs(1), 3)
-                  .real_ip_key()
-                  .build();
-        let middleware = RateLimiter::builder(backend.clone(), input)
-                    .add_headers()
-                    .build();
-         
+        let input = SimpleInputFunctionBuilder::new(Duration::from_secs(1), 3).real_ip_key().build();
+        let middleware = RateLimiter::builder(backend.clone(), input).add_headers().build();
+        
         let cors = Cors::permissive()
-                       /* .allowed_origin(&env::var("DOMAIN").unwrap()) // 允许你的前端地址
-                        
-                        .allowed_methods(vec!["GET", "POST"])
-                        .allowed_headers(vec![
-                            http::header::AUTHORIZATION,
-                            http::header::ACCEPT,
-                            http::header::CONTENT_TYPE,
-                        ]) */
-                        .supports_credentials() 
-                        .max_age(Some(get_exp() as usize)); 
+                        .supports_credentials();
+                        //.max_age(Some(get_exp() as usize)); 
 
         App::new().wrap(middleware.clone())
+        //.wrap(TokenChecker)
         .wrap(cors)
         //.wrap(SessionMiddleware::new(CookieSessionStore::default(), Key::generate().clone()))
         /*
@@ -127,6 +120,7 @@ async fn main()->io::Result<()> {
         .app_data(web::Data::new(DbState{db:db_addr.clone()}))
         .app_data(web::Data::new(encrypt_clients.clone()))
         
-        .configure(account_config)
+        .configure(account_routes)
+        .configure(subaccount_routes)
     }).bind(format!("{}:{}",server_cfg.server,server_cfg.port))?.run().await
 }

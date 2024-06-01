@@ -118,9 +118,9 @@ const FrameCreateAccount = forwardRef<ComponnetExportRef,ComponnetRef>((props,re
         <Fragment>
             <Grid container spacing={0} sx={{ flexGrow: 1 }} >
             
-                <Grid xs={12} className="flex justify-start items-end mt-4 ml-3">
+                <Grid xs={12} className="flex justify-start items-end mt-4 ml-8">
                     <BackButton className="" onClick={()=>onBackBtnClick?.()}/>
-                    <Typography level="h3" className="ml-[110px] text-blue-50 shadow-lg">Create Account</Typography>
+                    <Typography level="h3" className="ml-[90px] text-blue-50 shadow-lg">Create Account</Typography>
                 </Grid>
             </Grid>
             <Grid xs={12} className="mt-2">
