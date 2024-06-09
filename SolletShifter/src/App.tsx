@@ -3,7 +3,7 @@ import "./App.css";
 import '@fontsource/inter';
 import 'tailwindcss/tailwind.css';
 
-import { createContext, useEffect } from "react";
+import {useEffect } from "react";
 
 import { useColorScheme } from '@mui/joy/styles';
 
@@ -11,7 +11,7 @@ import { appWindow } from "@tauri-apps/api/window";
 import Title from "./Title";
 import MainFrame from "./MainFrame";
 import { Buffer } from 'buffer';
-import { LoginInfo } from "./commmon/common";
+
 window.Buffer = Buffer;
 
 
@@ -25,7 +25,7 @@ function App() {
 
   setMode('dark');
   useEffect(()=>{
-
+    console.log("app start");
     setTimeout(()=>{
       appWindow.show();
     },1000);

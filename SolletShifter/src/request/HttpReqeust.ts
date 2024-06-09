@@ -49,11 +49,8 @@ export class HttpReqeust {
 
   public static async DeleteData(url: any) {
     try {
-      //HttpReqeust.Init();
-      let response = await axios.delete(url);//,{withCredentials: true}
-    
+      let response = await axios.delete(url);
       return response.data;
-
     } catch (error) {
       console.error('Error:', error);
       throw error;

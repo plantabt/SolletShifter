@@ -13,8 +13,8 @@ import SnackPopbar, { SnackPopbarExportRef } from "../componnet/SnackPopbar";
 import { CallRustDelegate } from "../commmon/CallRustDelegate";
 import { HttpReqeust } from "../request/HttpReqeust";
 import { JWT } from "../JWT";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../store";
+import { useDispatch } from "react-redux";
+
 import { login, logout } from "../store/modules/LoginInfoStore";
 
 interface ComponnetRef{

@@ -11,30 +11,39 @@ import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 
 export interface FrameAccountListExportRef{
   CreateAccount:(cardInfo:CardItem)=>void;
-  
+  ClearAccounts:()=>void;
 }
 interface ComponnetRef{
+    onUpdateList:(subaclist:CardItem[])=>void;
     onCreateAccount:()=>void;
     onImportAccount:()=>void;
     onRemoveItem:(index:number,privatekey:string)=>Promise<boolean>;
 }
 export interface CardItem{
-    mnemonic:string;
+    phrase:string;
     privatekey:string;
     account_name:string;
   }
   
 
 const FrameAccountList = forwardRef<FrameAccountListExportRef,ComponnetRef>((props,ref)=> {
-    const {onCreateAccount,onImportAccount,onRemoveItem}=props;
+    const {onCreateAccount,onImportAccount,onRemoveItem,onUpdateList}=props;
     
     const [AccountCards,setAccountCards] = useState<CardItem[]>([]);
 
     useImperativeHandle(ref,()=>({
       CreateAccount:(cardInfo:CardItem)=>{
         setAccountCards(currentCards=>[...currentCards,cardInfo]);
+ 
+      },
+      ClearAccounts:()=>{
+        setAccountCards([]);
       }
     }));
+
+    useEffect(()=>{
+      onUpdateList(AccountCards);
+    },[AccountCards])
 
     function handleAccountInfoCardClick(index:number){
         console.log(`handleAccountInfoCardClick:${index}`);
@@ -67,7 +76,7 @@ const FrameAccountList = forwardRef<FrameAccountListExportRef,ComponnetRef>((pro
             {
               AccountCards.map((item,index)=>(
                 <Grid xs={12} key={index}>
-                  <AccountInfoCard onClickRemove={(privatekey)=>handleAccountInfoCardRemoveClick(index,privatekey)} onClick={()=>handleAccountInfoCardClick(index)} AccountName={item.account_name} Mnemonic={item.mnemonic}/>
+                  <AccountInfoCard onClickRemove={(privatekey)=>handleAccountInfoCardRemoveClick(index,privatekey)} onClick={()=>handleAccountInfoCardClick(index)} AccountName={item.account_name} Phrase={item.phrase}/>
                 </Grid>
               )) 
              }

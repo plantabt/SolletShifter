@@ -2,7 +2,7 @@ import "./MainFrame.css";
 import "./styles.css";
 import '@fontsource/inter';
 import 'tailwindcss/tailwind.css';
-import { createRef, Fragment, useEffect, useRef, useState } from "react";
+import { createRef,useEffect, useRef, useState } from "react";
 import WalletIcon from '@mui/icons-material/Wallet';
 import MoveUpIcon from '@mui/icons-material/MoveUpRounded';
 import ExchangeIcon from '@mui/icons-material/CurrencyExchangeRounded';
@@ -17,17 +17,17 @@ import MenubarButton, { ButtonRef } from "./componnet/MenubarButton";
 import NetSelBlock from "./componnet/NetSelBolck";
 
 import FrameCreateAccount from "./Frames/FrameCreateAccount";
-import FrameAccountList, { FrameAccountListExportRef } from "./Frames/FrameAccountList";
+import FrameAccountList, { CardItem, FrameAccountListExportRef } from "./Frames/FrameAccountList";
 
 import FrameImportAccount from "./Frames/FrameImportAccount";
 import { AccountInfo } from "./commmon/common";
 import FrameTransfer from "./Frames/FrameTransfer";
 import { SubAccountReq } from "./request/SubAccountReq";
-import { CreateSubAccountPayload } from "./request/common";
+import { CreateSubAccountPayload, SubAccount } from "./request/common";
 import { CallRustDelegate } from "./commmon/CallRustDelegate";
 import { JWT } from "./JWT";
 import { CryptoSupport } from "./request/CryptoSupport";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "./store";
 import { HttpReqeust } from "./request/HttpReqeust";
 
@@ -54,8 +54,9 @@ enum FramePages {
 function MainFrame() {
   //const changeLoginStore = useDispatch();
   const loginInfoStore = useSelector((state: RootState) => state.auth);
-  
+
   const [CurrentFrame, setCurrentFrame] = useState(FramePages.MainFrame);
+  const [subAccountlist,setSubAaccountlist] = useState<SubAccount[]>([]);
   //const [mounted, setMounted] = useState(false);
   //const [value, setValue] = useState<string | null>('default');
   const [lastBarBtn, setLastBarBtn] = useState<ButtonRef | null>(null);
@@ -79,11 +80,12 @@ function MainFrame() {
       (async ()=>{
         
         let server=await CallRustDelegate.GetServer();
-        let respones_data = await SubAccountReq.GetSubAccounts(server,loginInfoStore.privatekey,JWT.read_token());
+        let respones_data = await SubAccountReq.GetSubAccounts(server,JWT.read_token());
         if(respones_data.status==HttpReqeust.STATUS_OK){
+          AccountListExport.current?.ClearAccounts();
           respones_data.data.map((item:any)=>{
             let account = item["account"];
-            AccountListExport.current?.CreateAccount({ mnemonic: account.phrase, account_name: account.name ,privatekey:account.privatekey});
+            AccountListExport.current?.CreateAccount({ phrase: account.phrase, account_name: account.name ,privatekey:account.privatekey});
         });
 
       }else if(respones_data.status==HttpReqeust.STATUS_ERROR){
@@ -103,6 +105,7 @@ function MainFrame() {
       setLastBarBtn(BarBtnRefs.current[0]?.current);
     }, 1000);
   }, []);
+
   function handleCreateAccount() {
     setCurrentFrame(FramePages.CreateAccount);
     //setAccountCards(currentCards=>[...currentCards,dataSource]);
@@ -157,9 +160,8 @@ function MainFrame() {
   async function onRemoveItemDel(_index:number,privatekey:string):Promise<boolean>{
       
       let server = await CallRustDelegate.GetServer();
-      let owner = loginInfoStore.privatekey;
       let token = await JWT.read_token();
-      let response = await SubAccountReq.DelSubAccounts(server,owner,privatekey,token);
+      let response = await SubAccountReq.DelSubAccounts(server,privatekey,token);
 
       if(response.status==HttpReqeust.STATUS_OK){
         console.log("Delete item1:true");
@@ -170,15 +172,27 @@ function MainFrame() {
       }
   }
 
+  function onUpdateSubAccounts(aclist:CardItem[]){
+    setSubAaccountlist([]);
+    aclist.map((item)=>{
+      setSubAaccountlist(oldparam =>[...oldparam,{
+                                                phrase:item.phrase,
+                                                privkey:item.privatekey,
+                                                name:item.account_name
+                                              }])
+    });
+    
+  }
+
   function handleBack() {
     setCurrentFrame(FramePages.MainFrame);
   }
 
   async function handleFinish(account_info: AccountInfo,type:string) {
     if(ACCONT_FRAME_NAME[0]==type){
-      AccountListExport.current?.CreateAccount({ mnemonic: account_info.mnemonic, account_name: account_info.account_name ,privatekey:""});
+      AccountListExport.current?.CreateAccount({ phrase: account_info.mnemonic, account_name: account_info.account_name ,privatekey:""});
     } else if(ACCONT_FRAME_NAME[1]==type){
-      AccountListExport.current?.CreateAccount({ mnemonic: account_info.mnemonic, account_name: account_info.account_name,privatekey:account_info.privatekey })
+      AccountListExport.current?.CreateAccount({ phrase: account_info.mnemonic, account_name: account_info.account_name,privatekey:account_info.privatekey })
     }
     let privatekey = account_info.privatekey;
     if (privatekey==""){
@@ -217,7 +231,7 @@ function MainFrame() {
         <Grid xs={9}  >
           {/* account Framme */}
           <div className={`${CurrentFrame == FramePages.MainFrame ? "visible" : "hidden"}`}>
-            <FrameAccountList ref={AccountListExport} onCreateAccount={handleCreateAccount} onImportAccount={handleImportAccount} onRemoveItem={onRemoveItemDel} />
+            <FrameAccountList ref={AccountListExport} onCreateAccount={handleCreateAccount} onImportAccount={handleImportAccount} onRemoveItem={onRemoveItemDel} onUpdateList={onUpdateSubAccounts}/>
           </div>
           <div className={`${CurrentFrame == FramePages.CreateAccount ? "visible" : "hidden"}`}>
             <FrameCreateAccount onBackBtnClick={handleBack} onFinish={handleFinish} name={ACCONT_FRAME_NAME[0]}/>
@@ -228,7 +242,7 @@ function MainFrame() {
 
           {/* account Transfer */}
           <div className={`${CurrentFrame == FramePages.MainTranser ? "visible" : "hidden"}`}>
-            <FrameTransfer onBackBtnClick={handleBack} onFinish={handleFinish} name={ACCONT_FRAME_NAME[1]} />
+            <FrameTransfer onFinish={handleFinish} name={ACCONT_FRAME_NAME[1]} subaccounts={subAccountlist}/>
           </div>
         </Grid>
 

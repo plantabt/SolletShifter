@@ -12,7 +12,7 @@ import PubKeyCpy from "../assets/imgs/pubkey_cpy.png"
 import { CssVarsProvider, extendTheme } from '@mui/joy/styles';
 
 
-import { Dropdown, Menu, MenuButton, MenuItem, Table } from "@mui/joy";
+import { Dropdown, Menu, MenuButton, MenuItem, Table, Tooltip } from "@mui/joy";
 import { Box, Grid, List, ListItem, ListItemButton, listItemButtonClasses, Sheet, SvgIconProps } from "@mui/joy";
 import { forwardRef,  ReactElement, useEffect, useImperativeHandle, useRef, useState } from "react";
 import TitleIcon from '@mui/icons-material/AccountBalanceRounded'
@@ -22,14 +22,14 @@ import EthIcon from 'cryptocurrency-icons/32@2x/color/eth@2x.png'
 import PolyIcon from 'cryptocurrency-icons/32@2x/color/poly@2x.png'
 import { CryptoSupport } from '../request/CryptoSupport';
 import SnackPopbar, { SnackPopbarExportRef } from './SnackPopbar';
-import { MintItem } from '../commmon/common';
+import { formatText, MintItem } from '../commmon/common';
 
 interface ComponnetProps {
 
   onClick?: (e: any) => void;
   onClickRemove?: (privatekey:string) => void;
   AccountName: string;
-  Mnemonic: string;
+  Phrase: string;
 }
 export interface AccountInfoCardExport {
   updateTransfer:()=>void;
@@ -69,10 +69,10 @@ const AccountInfoCard = forwardRef<AccountInfoCardExport, ComponnetProps>((props
   //createData('04/12/24', <span className="flex justify-start"><img src={SlanaIcon} className="w-4 h-4 -mt-[1px]" />123.00</span>, 6.0, 24, 4.0)
   const [transactionRecords,setTransactionRecords]=useState<TransactionRecord[]>([]);
   const [rows,_setRows] = useState<MintItem[]>([]);
-  const { onClick, onClickRemove, AccountName, Mnemonic } = props;
+  const { onClick, onClickRemove, AccountName, Phrase } = props;
   const [PubkeyList,setPubkeyList]=useState<SelectedPubkeyCopy[]>([]);
   const [_AccountName, _setAccountName] = useState<string>(AccountName);
-  const [_Mnemonic, _setMnemonic] = useState<string>(Mnemonic);
+  const [_Phrase, _setPhrase] = useState<string>(Phrase);
   const SnackPopbarRef = useRef<SnackPopbarExportRef>(null);
 
   const [seledPubkey, setSeledPubkey] = useState<SelectedPubkeyCopy | null>(null);
@@ -92,28 +92,12 @@ const AccountInfoCard = forwardRef<AccountInfoCardExport, ComponnetProps>((props
   function handleOnClick(e: any) {
     onClick?.(e);
   }
-  async function handleDelBtn(e: any) {
-    let privkey = await CryptoSupport.GenerateSolanaPrivateKey(_Mnemonic);
+  async function handleDelBtn(_e: any) {
+    let privkey = await CryptoSupport.GenerateSolanaPrivateKey(_Phrase);
     onClickRemove?.(privkey);
    
   }
-  function formatText(text: string) {
-    if (text == undefined) {
-      return "";
-    }
-    if (text.length <= 0) {
-      return text;
-    }
 
-    const startChars = 16; // 显示前10个字符
-    const endChars = 16; // 显示后10个字符
-    const dots = "...";
-
-    const start = text.slice(0, startChars);
-    const end = text.slice(-endChars);
-
-    return `${start}${dots}${end}`;
-  }
   async function handleCopyContent(){
     await navigator.clipboard.writeText(seledPubkey?.addr?seledPubkey?.addr:"");
     SnackPopbarRef.current?.setTitle(`Copy ${seledPubkey?.addr} success!!`);
@@ -162,13 +146,13 @@ const AccountInfoCard = forwardRef<AccountInfoCardExport, ComponnetProps>((props
       return;
     }
     
-    let pubkey = (await CryptoSupport.GetSolanaPubKey(_Mnemonic)).toString();
+    let pubkey = (await CryptoSupport.GetSolanaPubKey(_Phrase)).toString();
     setPubkeyList(oldparams=>[...oldparams,{ name: 'SOLANA', icon: <img src={SlanaIcon} className="w-4 h-4" />, addr: pubkey }]);
 
-    pubkey = await CryptoSupport.generateEthereumPublicKey(_Mnemonic);
+    pubkey = await CryptoSupport.generateEthereumPublicKey(_Phrase);
     setPubkeyList(oldparams=>[...oldparams,{ name: 'ETH', icon: <img src={EthIcon} className="w-4 h-4" />, addr: pubkey }]);
 
-    pubkey = await CryptoSupport.generatePolygonPublicKey(_Mnemonic);
+    pubkey = await CryptoSupport.generatePolygonPublicKey(_Phrase);
     setPubkeyList(oldparams=>[...oldparams,{ name: 'POLY', icon: <img src={PolyIcon} className="w-4 h-4" />, addr: pubkey }]);
     
     
@@ -312,7 +296,7 @@ const AccountInfoCard = forwardRef<AccountInfoCardExport, ComponnetProps>((props
               <div style={{ backgroundImage: `url(${PubKeyCpy})`, backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'left center' }} className='w-[400px] mx-4 mt-2 h-8 flex justify-start items-center'>
                 <span className="text-xs text-left mx-3">Pubkey:</span>
                 <Dropdown >
-                  <MenuButton endDecorator={<ArrowDropDown />} className="text-xs min-h-5 max-h-5  w-[300px] max-w-[300px] min-w-[300px] shadow-none border-none rounded-none MenuDropDown">{seledPubkey?.icon}<span> {": "+formatText(seledPubkey?.addr?seledPubkey?.addr:"")}</span></MenuButton>
+                  <MenuButton endDecorator={<ArrowDropDown />} className="text-xs min-h-5 max-h-5  w-[300px] max-w-[300px] min-w-[300px] shadow-none border-none rounded-none MenuDropDown">{seledPubkey?.icon}<span> {": "+formatText(seledPubkey?.addr?seledPubkey?.addr:"",16)}</span></MenuButton>
                   <Menu className="min-w-[380px] max-w-[380px] w-[380px]">
 
                     <ListItem nested className="text-xs ">
@@ -339,7 +323,9 @@ const AccountInfoCard = forwardRef<AccountInfoCardExport, ComponnetProps>((props
               <ContentCopyIcon className='ContentCopyBtn' onClick={handleCopyContent}/>
             </Grid>
             <Grid xs={2} className="flex justify-end items-center">
+            <Tooltip title="Delete" variant="solid">
               <DeleteBtn className='DeleteBtn' onClick={handleDelBtn} />
+            </Tooltip>
             </Grid>
             {/* table header */}
             <Grid xs={12} className="flex items-start mt-2">

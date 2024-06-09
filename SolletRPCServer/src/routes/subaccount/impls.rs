@@ -1,8 +1,8 @@
 use actix_web::{delete, get, post, put, web, HttpRequest, HttpResponse, Responder};
 use chrono::Utc;
-use crate::{db::{account::message::FetchAccount, subaccount::message::{FetchSubAccount, InsSubAccount}}, jwt};
+use crate::{db::{account::message::FetchAccount, subaccount::message::{DelSubAccountMsg, FetchSubAccountsMsg, InsSubAccount, UpdateSubAccountMsg}}, jwt};
 use dbengine::utils::DbState;
-use log::info;
+use log::{info, warn};
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 
@@ -37,54 +37,82 @@ async fn create_subaccount(data:web::Json<SubAccountReq>,state:web::Data<DbState
                 return HttpResponse::Ok().json(RepStatus { status:ResponseStatus::ERROR.str(),data:make_reg_reponse_json("SubAccount save failed!",&name.clone(),"")});
             },
         };
-            
-       
-    }else{
-
     }
-
-    return HttpResponse::Ok().json(RepStatus { status:ResponseStatus::ERROR.str(),data:make_reg_reponse_json("SubAccount  exist","","")});
+    return HttpResponse::Ok().json(RepStatus { status:ResponseStatus::ERROR.str(),data:make_reg_reponse_json("SubAccount save failed!",&name.clone(),"")});
+ 
 }
 
-#[get("/{owner}/{token}")]
-async fn read_subaccounts(path:web::Path<(String,String)>,state:web::Data<DbState>,req:HttpRequest)->impl Responder{
-    let (owner,_token) = path.into_inner();
-    info!("path:{} - {}",owner,_token);
-    let db = state.as_ref().db.clone();
-    match db.send(FetchSubAccount{
-        owner:owner.clone(),
-    }).await{
-        Ok(res) => {
-            let accounts = res.unwrap();
-            //info!{"All SubAccounts:{:#?}",accounts};
-            return HttpResponse::Ok().json(RepStatus { status:ResponseStatus::OK.str(), data:serde_json::to_value(accounts).unwrap()});
-            /*
-            for item in res{
-                let account = item.account;
-                return HttpResponse::Ok().json(RepStatus { status:ResponseStatus::OK.str(), data:accounts});
-            } */
-         },
-        Err(_) => {  },
+#[get("/{token}")]
+async fn read_subaccounts(path:web::Path<String>,state:web::Data<DbState>,req:HttpRequest)->impl Responder{
+    let token = path.into_inner();
+
+    if let Some(user_claim) = jwt::token_decode(&token){
+        info!("read_subaccounts:{:#?}",user_claim);
+        let owner = user_claim.pkey;
+        let db = state.as_ref().db.clone();
+        match db.send(FetchSubAccountsMsg{
+            owner:owner.clone(),
+        }).await{
+            Ok(res) => {
+                let accounts = res.unwrap();
+                //info!{"All SubAccounts:{:#?}",accounts};
+                return HttpResponse::Ok().json(RepStatus { status:ResponseStatus::OK.str(), data:serde_json::to_value(accounts).unwrap()});
+             },
+            Err(_) => { 
+                return HttpResponse::Ok().json(RepStatus { status:ResponseStatus::ERROR.str(),data:make_reg_reponse_json("No subaccount!","","")});
+             },
+        }
     }
-    return HttpResponse::Ok().json(RepStatus { status:ResponseStatus::ERROR.str(),data:make_reg_reponse_json("Account not exist","","")});
+    
+    return HttpResponse::Ok().json(RepStatus { status:ResponseStatus::ERROR.str(),data:make_reg_reponse_json("No subaccount!","","")});
 }
 
-#[get("/{owner}/{pk}/{token}")]
-async fn read_subaccount(data:web::Path<(String,String,String)>,req:HttpRequest)->impl Responder{
+#[get("/{pk}/{token}")]
+async fn read_subaccount(data:web::Path<(String,String)>,req:HttpRequest)->impl Responder{
     info!("read_subaccount:{:#?}",data);
     return HttpResponse::Ok().json(RepStatus { status:ResponseStatus::OK.str(),data:make_reg_reponse_json("Account not exist","","")});
 }
 
-#[put("/{owner}/{pk}/{token}")]
-async fn update_subaccount(data:web::Path<(String,String)>,req:HttpRequest)->impl Responder{
+#[put("/{name}/{pk}/{token}")]
+async fn update_subaccount(data:web::Path<(String,String,String)>,state:web::Data<DbState>,req:HttpRequest)->impl Responder{
     info!("update_subaccount:{:#?}",data);
-    return HttpResponse::Ok().json(RepStatus { status:ResponseStatus::OK.str(),data:make_reg_reponse_json("Account not exist","","")});
+    let (newname,privatekey,token)=data.into_inner();
+    let db = state.as_ref().db.clone();
+
+    if let Some(user_claim) = jwt::token_decode(&token){
+        let owner = user_claim.pkey.clone();
+        match db.send(UpdateSubAccountMsg{owner:owner.clone(),privatekey:privatekey.clone(),account:json!({})}).await{
+            Ok(_) => {
+                return HttpResponse::Ok().json(RepStatus { status:ResponseStatus::OK.str(),data:make_reg_reponse_json("Delete successfully!","","")});
+            },
+            Err(_) => {
+                return HttpResponse::Ok().json(RepStatus { status:ResponseStatus::ERROR.str(),data:make_reg_reponse_json("Delete failed!","","")});
+            },
+        }
+    }
+
+    return HttpResponse::Ok().json(RepStatus { status:ResponseStatus::ERROR.str(),data:make_reg_reponse_json("Delete failed!","","")});
 }
 
-#[delete("/{owner}/{pk}/{token}")]
-async fn delete_subaccount(data:web::Path<(String,String)>,req:HttpRequest)->impl Responder{
-    info!("delete_subaccount:{:#?}",data);
-    return HttpResponse::Ok().json(RepStatus { status:ResponseStatus::OK.str(),data:make_reg_reponse_json("Account not exist","","")});
+#[delete("/{pk}/{token}")]
+async fn delete_subaccount(data:web::Path<(String,String)>,state:web::Data<DbState>,req:HttpRequest)->impl Responder{
+    warn!("delete_subaccount:{:#?}",data);
+    let (privatekey,token)=data.into_inner();
+    let db = state.as_ref().db.clone();
+
+    if let Some(user_claim) = jwt::token_decode(&token){
+        let owner = user_claim.pkey.clone();
+        match db.send(DelSubAccountMsg{owner:owner.clone(),privatekey:privatekey.clone()}).await{
+            Ok(_) => {
+                return HttpResponse::Ok().json(RepStatus { status:ResponseStatus::OK.str(),data:make_reg_reponse_json("Delete successfully!","","")});
+            },
+            Err(_) => {
+                return HttpResponse::Ok().json(RepStatus { status:ResponseStatus::ERROR.str(),data:make_reg_reponse_json("Delete failed!","","")});
+            },
+        }
+    }
+
+    return HttpResponse::Ok().json(RepStatus { status:ResponseStatus::ERROR.str(),data:make_reg_reponse_json("Delete failed!","","")});
 }
 
 pub fn subaccount_routes(cfg:&mut web::ServiceConfig){

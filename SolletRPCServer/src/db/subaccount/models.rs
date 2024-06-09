@@ -29,9 +29,22 @@ pub struct SubAccount {
 
 #[derive( Debug, Serialize,Queryable,Insertable)]
 #[diesel(table_name=subaccount)]
-pub struct InsertSubAccount {
+pub struct InsertSubAccountMod {
     pub account:Value,
     pub owner:String,
     pub create_time: DateTime<Utc>,
     pub privatekey: String,
+}
+
+#[derive( Debug, Serialize,Queryable,Insertable)]
+#[diesel(table_name=subaccount)]
+pub struct DelSubAccountMod {
+    pub owner:String,
+    pub privatekey: String,
+}
+
+#[derive( Debug, Serialize,Queryable,Insertable)]
+#[diesel(table_name=subaccount)]
+pub struct UpdateSubAccountMod {
+    pub account:Value,
 }

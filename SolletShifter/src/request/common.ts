@@ -28,3 +28,8 @@ export enum ResponseStatus{
     STATUS_TIMEOUT = "TIMEOUT",
     STATUS_ERROR = "ERROR"
 }*/
+export interface SubAccount{
+    name:string,
+    privkey:string,
+    phrase:string,
+}

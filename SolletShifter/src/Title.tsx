@@ -8,7 +8,7 @@ import { Button, Grid, Typography } from "@mui/joy";
 import CloseIcon from '@mui/icons-material/Close';
 import MinmmizeIcon from '@mui/icons-material/Minimize';
 import { appWindow } from "@tauri-apps/api/window";
-import { useContext, useEffect, useRef, useState } from "react";
+import {useEffect, useRef, useState } from "react";
 import LoginFrame, { LoginFrameExportRef } from "./Frames/LoginFrame";
 import { CallRustDelegate } from "./commmon/CallRustDelegate";
 //import { useDispatch, useSelector } from "react-redux";
@@ -38,7 +38,7 @@ function Title() {
     setLoginName(name);
   }
   useEffect(()=>{
-    
+    console.log("title sdfasfsaf ");
   },[]);
   const loginFrame = useRef<LoginFrameExportRef | null>(null);
 
